@@ -1,0 +1,22 @@
+.DS_Store
+*.log
+dist
+build
+node_modules
+.node-red
+coverage
+pnpm-workspace.yaml
+*.jar
+null/
+
+# tooling / build caches
+.claude
+.nrg
+*.tsbuildinfo
+
+# local-only assets (not part of the published package)
+demo
+docs
+test-data
+test-results
+post-draft.md

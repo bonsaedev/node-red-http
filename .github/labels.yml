@@ -1,0 +1,63 @@
+# Repository issue/PR labels, kept in sync by .github/workflows/labels.yaml
+# (crazy-max/ghaction-github-labeler). Edit here, push to main, and the repo's
+# labels are reconciled to match this file exactly.
+
+# --- type ---
+- name: bug
+  color: d73a4a
+  description: Something isn't working
+- name: enhancement
+  color: a2eeef
+  description: New feature or request
+- name: documentation
+  color: 0075ca
+  description: Docs, README, or examples
+- name: refactor
+  color: fbca04
+  description: Code change that neither fixes a bug nor adds a feature
+- name: test
+  color: c2e0c6
+  description: Adds or fixes tests
+- name: chore
+  color: fef2c0
+  description: Build, tooling, or maintenance
+
+# --- area ---
+- name: "area: http-request"
+  color: 1d76db
+  description: The outbound http-request node
+- name: "area: http-in"
+  color: 1d76db
+  description: The http-in source node
+- name: "area: http-response"
+  color: 1d76db
+  description: The http-response sink node
+- name: dependencies
+  color: 0366d6
+  description: Dependency updates (incl. @bonsae/nrg)
+
+# --- workflow / triage ---
+- name: "good first issue"
+  color: 7057ff
+  description: Good for newcomers
+- name: "help wanted"
+  color: 008672
+  description: Extra attention is needed
+- name: question
+  color: d876e3
+  description: Further information is requested
+- name: "breaking change"
+  color: b60205
+  description: Introduces a backwards-incompatible change
+- name: blocked
+  color: b60205
+  description: Blocked on something else
+- name: wontfix
+  color: ffffff
+  description: This will not be worked on
+- name: duplicate
+  color: cfd3d7
+  description: This issue or pull request already exists
+- name: invalid
+  color: e4e669
+  description: This doesn't seem right

@@ -1,0 +1,60 @@
+{
+  "name": "@bonsae/node-red-http",
+  "version": "0.1.0",
+  "description": "HTTP nodes (request / in / response) for Node-RED, built with @bonsae/nrg on the native fetch API",
+  "author": "Allan Oricil <allanoricil@duck.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bonsaedev/node-red-http"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10.11.0"
+  },
+  "keywords": ["node-red", "nrg", "bonsae", "http", "fetch"],
+  "scripts": {
+    "dev": "vite --mode development",
+    "build": "vite build --mode production",
+    "validate": "pnpm validate:tsc && pnpm validate:lint && pnpm validate:format",
+    "validate:tsc": "tsc -p src/server/tsconfig.json --noEmit && tsc -p src/client/tsconfig.json --noEmit && tsc -p tests/server/tsconfig.json --noEmit",
+    "validate:lint": "eslint src/",
+    "validate:format": "prettier --check \"src/**/*.{ts,vue,json}\"",
+    "lint": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,vue,json}\"",
+    "test": "pnpm test:server:unit && pnpm test:server:integration",
+    "test:server:unit": "vitest run --config vitest.server.unit.config.ts",
+    "test:server:unit:watch": "vitest --config vitest.server.unit.config.ts",
+    "test:server:integration": "vitest run --config vitest.server.integration.config.ts",
+    "test:server:integration:watch": "vitest --config vitest.server.integration.config.ts",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,vue}": ["eslint --fix", "prettier --write"],
+    "tests/**/*.ts": ["prettier --write"],
+    "src/**/*.json": ["prettier --write"]
+  },
+  "devDependencies": {
+    "@bonsae/nrg": "^0.39.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@types/node": "^22.15.18",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitest/coverage-v8": "^4.1.8",
+    "eslint": "^9.27.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.4.2",
+    "lint-staged": "^16.4.0",
+    "node-red": "5.0.0",
+    "prettier": "^3.5.3",
+    "tsx": "^4.22.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.4",
+    "vitest": "^4.1.8",
+    "vue": "^3.5.34"
+  }
+}

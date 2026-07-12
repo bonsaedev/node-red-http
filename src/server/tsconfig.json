@@ -1,0 +1,7 @@
+{
+  "extends": "@bonsae/nrg/tsconfig/lib/server.json",
+  "compilerOptions": {
+    "rootDir": ".."
+  },
+  "include": ["**/*.ts", "../shared/**/*.ts"]
+}
