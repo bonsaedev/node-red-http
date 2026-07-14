@@ -1,0 +1,42 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP request",
+  "configs": {
+    "name": "Имя",
+    "method": "Метод",
+    "url": "URL",
+    "paytoqs": "Полезная нагрузка",
+    "headers": "Заголовки",
+    "ret": "Возврат",
+    "authType": "Аутентификация",
+    "persist": "Поддерживать соединение",
+    "senderr": "Отправлять ошибки запроса на выход",
+    "insecureHTTPParser": "Включить небезопасный HTTP-парсер"
+  },
+  "credentials": {
+    "user": "Имя пользователя",
+    "password": "Пароль",
+    "bearerToken": "Токен"
+  },
+  "options": {
+    "method": {
+      "use": "- использовать msg.method -"
+    },
+    "ret": {
+      "txt": "строка UTF-8",
+      "bin": "двоичный буфер",
+      "obj": "разобранный объект JSON"
+    },
+    "paytoqs": {
+      "ignore": "игнорировать",
+      "query": "добавить в строку запроса",
+      "body": "отправить в теле запроса"
+    },
+    "authType": {
+      "none": "без аутентификации",
+      "basic": "базовая аутентификация",
+      "digest": "дайджест-аутентификация",
+      "bearer": "bearer-токен"
+    }
+  }
+}

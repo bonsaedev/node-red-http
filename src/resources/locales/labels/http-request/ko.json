@@ -1,0 +1,42 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP request",
+  "configs": {
+    "name": "이름",
+    "method": "메서드",
+    "url": "URL",
+    "paytoqs": "페이로드",
+    "headers": "헤더",
+    "ret": "반환",
+    "authType": "인증",
+    "persist": "연결 유지",
+    "senderr": "요청 오류를 출력으로 보내기",
+    "insecureHTTPParser": "비보안 HTTP 파서 활성화"
+  },
+  "credentials": {
+    "user": "사용자 이름",
+    "password": "비밀번호",
+    "bearerToken": "토큰"
+  },
+  "options": {
+    "method": {
+      "use": "- msg.method 사용 -"
+    },
+    "ret": {
+      "txt": "UTF-8 문자열",
+      "bin": "바이너리 버퍼",
+      "obj": "파싱된 JSON 객체"
+    },
+    "paytoqs": {
+      "ignore": "무시",
+      "query": "쿼리 문자열에 추가",
+      "body": "요청 본문으로 보내기"
+    },
+    "authType": {
+      "none": "인증 없음",
+      "basic": "기본 인증",
+      "digest": "다이제스트 인증",
+      "bearer": "베어러 토큰"
+    }
+  }
+}

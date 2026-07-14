@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useFormNode } from "@bonsae/nrg/client";
 import type {
   ConfigsSchema,
@@ -7,7 +8,12 @@ import type {
 
 const { node } = useFormNode<typeof ConfigsSchema, typeof CredentialsSchema>();
 
-const methods = [
+// Labels come from this node's locale catalog
+// (src/resources/locales/labels/http-request/<locale>.json). HTTP method tokens
+// (GET/POST/…) are protocol keywords and stay untranslated.
+const t = (k: string): string => node._(`http-request.${k}`);
+
+const methods = computed(() => [
   { value: "GET", label: "GET" },
   { value: "POST", label: "POST" },
   { value: "PUT", label: "PUT" },
@@ -15,38 +21,42 @@ const methods = [
   { value: "HEAD", label: "HEAD" },
   { value: "OPTIONS", label: "OPTIONS" },
   { value: "PATCH", label: "PATCH" },
-  { value: "use", label: "- use msg.method -" },
-];
+  { value: "use", label: t("options.method.use") },
+]);
 
-const returns = [
-  { value: "txt", label: "a UTF-8 string" },
-  { value: "bin", label: "a binary buffer" },
-  { value: "obj", label: "a parsed JSON object" },
-];
+const returns = computed(() => [
+  { value: "txt", label: t("options.ret.txt") },
+  { value: "bin", label: t("options.ret.bin") },
+  { value: "obj", label: t("options.ret.obj") },
+]);
 
-const payloadModes = [
-  { value: "ignore", label: "ignore" },
-  { value: "query", label: "append to query string" },
-  { value: "body", label: "send as request body" },
-];
+const payloadModes = computed(() => [
+  { value: "ignore", label: t("options.paytoqs.ignore") },
+  { value: "query", label: t("options.paytoqs.query") },
+  { value: "body", label: t("options.paytoqs.body") },
+]);
 
-const authTypes = [
-  { value: "", label: "no authentication" },
-  { value: "basic", label: "basic authentication" },
-  { value: "digest", label: "digest authentication" },
-  { value: "bearer", label: "bearer token" },
-];
+const authTypes = computed(() => [
+  { value: "", label: t("options.authType.none") },
+  { value: "basic", label: t("options.authType.basic") },
+  { value: "digest", label: t("options.authType.digest") },
+  { value: "bearer", label: t("options.authType.bearer") },
+]);
 </script>
 
 <template>
   <div class="form-row">
-    <NodeRedInput v-model:value="node.name" label="Name" icon="tag" />
+    <NodeRedInput
+      v-model:value="node.name"
+      :label="t('configs.name')"
+      icon="tag"
+    />
   </div>
 
   <div class="form-row">
     <NodeRedSelectInput
       v-model:value="node.method"
-      label="Method"
+      :label="t('configs.method')"
       icon="exchange"
       :options="methods"
     />
@@ -55,7 +65,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedTypedInput
       v-model:value="node.url"
-      label="URL"
+      :label="t('configs.url')"
       icon="globe"
       :types="['str', 'msg']"
     />
@@ -64,7 +74,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedSelectInput
       v-model:value="node.paytoqs"
-      label="Payload"
+      :label="t('configs.paytoqs')"
       icon="arrows-h"
       :options="payloadModes"
     />
@@ -73,7 +83,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedTypedInput
       v-model:value="node.headers"
-      label="Headers"
+      :label="t('configs.headers')"
       icon="list"
       :types="['json', 'msg']"
     />
@@ -82,7 +92,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedSelectInput
       v-model:value="node.ret"
-      label="Return"
+      :label="t('configs.ret')"
       icon="sign-out"
       :options="returns"
     />
@@ -91,7 +101,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedSelectInput
       v-model:value="node.authType"
-      label="Authentication"
+      :label="t('configs.authType')"
       icon="lock"
       :options="authTypes"
     />
@@ -101,14 +111,14 @@ const authTypes = [
     <div class="form-row">
       <NodeRedInput
         v-model:value="node.credentials.user"
-        label="Username"
+        :label="t('credentials.user')"
         icon="user"
       />
     </div>
     <div class="form-row">
       <NodeRedInput
         v-model:value="node.credentials.password"
-        label="Password"
+        :label="t('credentials.password')"
         icon="lock"
         type="password"
       />
@@ -118,7 +128,7 @@ const authTypes = [
   <div v-if="node.authType === 'bearer'" class="form-row">
     <NodeRedInput
       v-model:value="node.credentials.bearerToken"
-      label="Token"
+      :label="t('credentials.bearerToken')"
       icon="lock"
       type="password"
     />
@@ -127,7 +137,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedToggle
       v-model="node.persist"
-      label="Keep the connection alive"
+      :label="t('configs.persist')"
       icon="plug"
     />
   </div>
@@ -135,7 +145,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedToggle
       v-model="node.senderr"
-      label="Send request errors to the output"
+      :label="t('configs.senderr')"
       icon="warning"
     />
   </div>
@@ -143,7 +153,7 @@ const authTypes = [
   <div class="form-row">
     <NodeRedToggle
       v-model="node.insecureHTTPParser"
-      label="Enable insecure HTTP parser"
+      :label="t('configs.insecureHTTPParser')"
       icon="unlock"
     />
   </div>

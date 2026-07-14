@@ -1,0 +1,42 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP request",
+  "configs": {
+    "name": "名称",
+    "method": "方法",
+    "url": "URL",
+    "paytoqs": "载荷",
+    "headers": "标头",
+    "ret": "返回",
+    "authType": "身份验证",
+    "persist": "保持连接",
+    "senderr": "将请求错误发送到输出",
+    "insecureHTTPParser": "启用不安全的 HTTP 解析器"
+  },
+  "credentials": {
+    "user": "用户名",
+    "password": "密码",
+    "bearerToken": "令牌"
+  },
+  "options": {
+    "method": {
+      "use": "- 使用 msg.method -"
+    },
+    "ret": {
+      "txt": "UTF-8 字符串",
+      "bin": "二进制缓冲区",
+      "obj": "解析后的 JSON 对象"
+    },
+    "paytoqs": {
+      "ignore": "忽略",
+      "query": "追加到查询字符串",
+      "body": "作为请求体发送"
+    },
+    "authType": {
+      "none": "无身份验证",
+      "basic": "基本身份验证",
+      "digest": "摘要身份验证",
+      "bearer": "Bearer 令牌"
+    }
+  }
+}

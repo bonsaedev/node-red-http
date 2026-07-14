@@ -1,0 +1,42 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP request",
+  "configs": {
+    "name": "名前",
+    "method": "メソッド",
+    "url": "URL",
+    "paytoqs": "ペイロード",
+    "headers": "ヘッダー",
+    "ret": "戻り値",
+    "authType": "認証",
+    "persist": "接続を維持する",
+    "senderr": "リクエストエラーを出力に送る",
+    "insecureHTTPParser": "安全でない HTTP パーサーを有効にする"
+  },
+  "credentials": {
+    "user": "ユーザー名",
+    "password": "パスワード",
+    "bearerToken": "トークン"
+  },
+  "options": {
+    "method": {
+      "use": "- msg.method を使用 -"
+    },
+    "ret": {
+      "txt": "UTF-8 文字列",
+      "bin": "バイナリバッファ",
+      "obj": "解析済み JSON オブジェクト"
+    },
+    "paytoqs": {
+      "ignore": "無視",
+      "query": "クエリ文字列に追加",
+      "body": "リクエストボディとして送る"
+    },
+    "authType": {
+      "none": "認証なし",
+      "basic": "Basic 認証",
+      "digest": "ダイジェスト認証",
+      "bearer": "ベアラートークン"
+    }
+  }
+}

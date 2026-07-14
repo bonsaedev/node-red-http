@@ -1,0 +1,9 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP in",
+  "configs": {
+    "name": "Имя",
+    "method": "Метод",
+    "url": "URL"
+  }
+}

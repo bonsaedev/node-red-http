@@ -1,0 +1,42 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP request",
+  "configs": {
+    "name": "Name",
+    "method": "Methode",
+    "url": "URL",
+    "paytoqs": "Payload",
+    "headers": "Header",
+    "ret": "Rückgabe",
+    "authType": "Authentifizierung",
+    "persist": "Verbindung offen halten",
+    "senderr": "Anfragefehler an den Ausgang senden",
+    "insecureHTTPParser": "Unsicheren HTTP-Parser aktivieren"
+  },
+  "credentials": {
+    "user": "Benutzername",
+    "password": "Passwort",
+    "bearerToken": "Token"
+  },
+  "options": {
+    "method": {
+      "use": "- msg.method verwenden -"
+    },
+    "ret": {
+      "txt": "eine UTF-8-Zeichenkette",
+      "bin": "ein Binärpuffer",
+      "obj": "ein geparstes JSON-Objekt"
+    },
+    "paytoqs": {
+      "ignore": "ignorieren",
+      "query": "an Query-String anhängen",
+      "body": "als Anfragekörper senden"
+    },
+    "authType": {
+      "none": "keine Authentifizierung",
+      "basic": "Basic-Authentifizierung",
+      "digest": "Digest-Authentifizierung",
+      "bearer": "Bearer-Token"
+    }
+  }
+}

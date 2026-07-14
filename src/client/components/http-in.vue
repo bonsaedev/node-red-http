@@ -4,6 +4,9 @@ import type { ConfigsSchema } from "../../shared/schemas/http-in";
 
 const { node } = useFormNode<typeof ConfigsSchema>();
 
+// Labels from src/resources/locales/labels/http-in/<locale>.json.
+const t = (k: string): string => node._(`http-in.${k}`);
+
 const methods = [
   { value: "get", label: "GET" },
   { value: "post", label: "POST" },
@@ -15,13 +18,17 @@ const methods = [
 
 <template>
   <div class="form-row">
-    <NodeRedInput v-model:value="node.name" label="Name" icon="tag" />
+    <NodeRedInput
+      v-model:value="node.name"
+      :label="t('configs.name')"
+      icon="tag"
+    />
   </div>
 
   <div class="form-row">
     <NodeRedSelectInput
       v-model:value="node.method"
-      label="Method"
+      :label="t('configs.method')"
       icon="exchange"
       :options="methods"
     />
@@ -30,7 +37,7 @@ const methods = [
   <div class="form-row">
     <NodeRedInput
       v-model:value="node.url"
-      label="URL"
+      :label="t('configs.url')"
       icon="globe"
       placeholder="/hello or /user/:id"
     />

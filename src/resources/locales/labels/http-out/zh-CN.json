@@ -1,0 +1,9 @@
+{
+  "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
+  "label": "HTTP out",
+  "configs": {
+    "name": "名称",
+    "statusCode": "状态码",
+    "headers": "标头"
+  }
+}
