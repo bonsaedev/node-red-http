@@ -11,12 +11,12 @@ import {
   type Runtime,
 } from "@bonsae/nrg/test/server/integration";
 import HttpIn from "../../../src/server/nodes/http-in";
-import HttpResponse from "../../../src/server/nodes/http-response";
+import HttpOut from "../../../src/server/nodes/http-out";
 
 /**
  * A minimal intermediate nrg node: reads the payload off the envelope and
  * re-emits it under the DEFAULT carry mode. Used to prove `_msgid` correlation
- * survives an nrg node between http-in and http-response (no trace required) —
+ * survives an nrg node between http-in and http-out (no trace required) —
  * which only works because nrg carries `_msgid` forward, so the PRIVATE channel
  * holding the live `res` is still recoverable downstream.
  */
@@ -64,17 +64,17 @@ class Delay extends IONode<
  * The real proof of the private-channel design: a live HTTP request flows through
  * Node-RED's actual server → http-in (which parks the live req/res on the
  * off-the-wire PRIVATE channel keyed by the message's `_msgid` and emits only a
- * clone-safe snapshot) → http-response (which reads the socket back off
+ * clone-safe snapshot) → http-out (which reads the socket back off
  * `msg[Channels].private.res` and replies). If the reply reaches the client, the live
  * `res` survived the trip without ever riding a wire.
  */
-describe("http-in → http-response (real HTTP round-trip)", () => {
+describe("http-in → http-out (real HTTP round-trip)", () => {
   let runtime: Runtime;
   let baseUrl: string;
 
   beforeAll(async () => {
     runtime = await startRuntime({
-      nodes: [HttpIn, HttpResponse, Passthrough, Delay],
+      nodes: [HttpIn, HttpOut, Passthrough, Delay],
       // The headless harness disables user routes by default — turn them on.
       settings: { httpNodeRoot: "/" },
     });
@@ -104,7 +104,7 @@ describe("http-in → http-response (real HTTP round-trip)", () => {
   it("GET: the reply reaches the live socket (query echoed as JSON)", async () => {
     const flow = runtime.flow();
     flow.addNode(HttpIn, { method: "get", url: "/hello" }).wire(
-      flow.addNode(HttpResponse, {
+      flow.addNode(HttpOut, {
         statusCode: "",
         headers: { type: "json", value: "{}" },
       }),
@@ -117,13 +117,13 @@ describe("http-in → http-response (real HTTP round-trip)", () => {
   });
 
   it("correlates through an intermediate nrg node (via _msgid, no trace)", async () => {
-    // http-in → passthrough (an nrg node, default carry mode) → http-response.
+    // http-in → passthrough (an nrg node, default carry mode) → http-out.
     // This works ONLY because nrg preserves `_msgid` across the node — the whole
     // point of the fix. The passthrough re-emits the query under the envelope.
     const flow = runtime.flow();
     const inNode = flow.addNode(HttpIn, { method: "get", url: "/via-nrg" });
     const mid = flow.addNode(Passthrough, {});
-    const respNode = flow.addNode(HttpResponse, {
+    const respNode = flow.addNode(HttpOut, {
       statusCode: "",
       headers: { type: "json", value: "{}" },
     });
@@ -140,7 +140,7 @@ describe("http-in → http-response (real HTTP round-trip)", () => {
     const flow = runtime.flow();
     const inNode = flow.addNode(HttpIn, { method: "get", url: "/concurrent" });
     const delay = flow.addNode(Delay, {});
-    const respNode = flow.addNode(HttpResponse, {
+    const respNode = flow.addNode(HttpOut, {
       statusCode: "",
       headers: { type: "json", value: "{}" },
     });
@@ -170,7 +170,7 @@ describe("http-in → http-response (real HTTP round-trip)", () => {
   it("POST: parses the JSON body and honors the configured status code", async () => {
     const flow = runtime.flow();
     flow.addNode(HttpIn, { method: "post", url: "/echo" }).wire(
-      flow.addNode(HttpResponse, {
+      flow.addNode(HttpOut, {
         statusCode: "201",
         headers: { type: "json", value: "{}" },
       }),

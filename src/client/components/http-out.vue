@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFormNode } from "@bonsae/nrg/client";
-import type { ConfigsSchema } from "../../shared/schemas/http-response";
+import type { ConfigsSchema } from "../../shared/schemas/http-out";
 
 const { node } = useFormNode<typeof ConfigsSchema>();
 </script>

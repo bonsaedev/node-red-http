@@ -22,7 +22,7 @@ type RequestSnapshot = {
 /**
  * Emitted per request. The live `res` rides the off-the-wire PRIVATE channel
  * (package-scoped, keyed by the message's `_msgid`) — never on the serialized
- * message — so http-response reads it back with `msg[Channels].private.res`. The
+ * message — so http-out reads it back with `msg[Channels].private.res`. The
  * public output is a clone-safe request snapshot for downstream nodes.
  */
 type HttpInOutputs = Outputs<{
@@ -129,7 +129,7 @@ export default class HttpIn extends IONode<
 
     // The live `res` rides the PRIVATE channel — off the wire, scoped to this
     // package, keyed by the `_msgid` nrg mints for this source send and carries
-    // forward. http-response reads it back with `msg[Channels].private.res` from
+    // forward. http-out reads it back with `msg[Channels].private.res` from
     // anywhere downstream; the public output carries only a clone-safe snapshot.
     this.send(
       "out",

@@ -47,9 +47,9 @@ message per request. No wire input.
 (GET) or the parsed body (POST/PUT/PATCH/DELETE), and `req` is a clone-safe
 snapshot `{ method, url, headers, query, params, body }`. The **live `res`
 socket** never rides the wire — it travels on the off-the-wire private lane (see
-below), so http-response can recover it from anywhere downstream.
+below), so http-out can recover it from anywhere downstream.
 
-### `http-response` (sink node)
+### `http-out` (sink node)
 
 Writes the reply for a request started by `http-in`. No wire output.
 
@@ -60,9 +60,9 @@ Writes the reply for a request started by `http-in`. No wire output.
 
 It reads the live socket off `msg.private.res`, replies with `msg.output`
 (from another nrg node) or the top-level message (a raw/injected message), and
-**claims** the socket so a second http-response for the same request is a no-op.
+**claims** the socket so a second http-out for the same request is a no-op.
 
-## How http-in ↔ http-response stay paired
+## How http-in ↔ http-out stay paired
 
 A live request/response socket is a non-serializable live object — it cannot ride
 the message wire (Node-RED clones messages), and threading a correlation id
@@ -74,7 +74,7 @@ through every intermediate node is brittle. Instead this package uses nrg's
   emits only the clone-safe snapshot.
 - nrg preserves `_msgid` through any intermediate nodes, so the lane entry stays
   reachable no matter how the flow is wired.
-- `http-response` reads `msg.private.res` back and replies — the socket survived
+- `http-out` reads `msg.private.res` back and replies — the socket survived
   the trip without ever being serialized.
 
 Because the lane is keyed per request, **concurrent requests never cross
@@ -104,10 +104,10 @@ pnpm test:server:integration
 ```
 [inject] --> [http-request GET https://api.example.com/thing] --> [debug]
 
-[http-in GET /hello] --> [function / any nrg node] --> [http-response]
+[http-in GET /hello] --> [function / any nrg node] --> [http-out]
 ```
 
-Wire an `http-in` to an `http-response` (optionally through any number of nodes)
+Wire an `http-in` to an `http-out` (optionally through any number of nodes)
 to serve a route; wire `http-request` after an `inject`/`function` to call an
 external API and route `msg.output.payload` onward.
 

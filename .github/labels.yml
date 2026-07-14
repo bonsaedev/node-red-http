@@ -29,9 +29,9 @@
 - name: "area: http-in"
   color: 1d76db
   description: The http-in source node
-- name: "area: http-response"
+- name: "area: http-out"
   color: 1d76db
-  description: The http-response sink node
+  description: The http-out sink node
 - name: dependencies
   color: 0366d6
   description: Dependency updates (incl. @bonsae/nrg)

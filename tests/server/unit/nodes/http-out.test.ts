@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import type { ServerResponse } from "node:http";
 import { createNode } from "@bonsae/nrg/test/server/unit";
-import HttpResponse from "../../../../src/server/nodes/http-response";
+import HttpOut from "../../../../src/server/nodes/http-out";
 
 function config(overrides: Record<string, unknown> = {}) {
   return {
@@ -24,9 +24,9 @@ function fakeRes() {
   };
 }
 
-describe("http-response", () => {
+describe("http-out", () => {
   it("reads the live res off the private channel and writes the reply", async () => {
-    const { node } = await createNode(HttpResponse, { config: config() });
+    const { node } = await createNode(HttpOut, { config: config() });
     const res = fakeRes();
 
     // The live `res` an http-in stashed on the private channel for this signal.
@@ -42,7 +42,7 @@ describe("http-response", () => {
   });
 
   it("reads the body from the top level (core-node message)", async () => {
-    const { node } = await createNode(HttpResponse, { config: config() });
+    const { node } = await createNode(HttpOut, { config: config() });
     const res = fakeRes();
 
     // No `output` envelope — e.g. a core function/change node set msg.payload.
@@ -57,7 +57,7 @@ describe("http-response", () => {
   });
 
   it("honors a configured status code", async () => {
-    const { node } = await createNode(HttpResponse, {
+    const { node } = await createNode(HttpOut, {
       config: config({ statusCode: "418" }),
     });
     const res = fakeRes();
@@ -72,7 +72,7 @@ describe("http-response", () => {
   });
 
   it("does nothing (no throw) when there is no live response on the channel", async () => {
-    const { node } = await createNode(HttpResponse, { config: config() });
+    const { node } = await createNode(HttpOut, { config: config() });
     // No channel seeded (orphan message) — the node warns and returns.
     await expect(
       node.receive({ output: { payload: "orphan" } }),
@@ -80,7 +80,7 @@ describe("http-response", () => {
   });
 
   it("answers a request exactly once (claims the res off the channel)", async () => {
-    const { node } = await createNode(HttpResponse, { config: config() });
+    const { node } = await createNode(HttpOut, { config: config() });
     const res = fakeRes();
 
     await node.receive(

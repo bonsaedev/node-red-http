@@ -6,7 +6,7 @@ import {
   Channels,
 } from "@bonsae/nrg/server";
 import type { ServerResponse } from "node:http";
-import { ConfigsSchema } from "../../shared/schemas/http-response";
+import { ConfigsSchema } from "../../shared/schemas/http-out";
 
 type Config = Infer<typeof ConfigsSchema>;
 
@@ -18,7 +18,7 @@ type Config = Infer<typeof ConfigsSchema>;
  * field. The reply body/status/headers ride `output` (from an nrg node) or the
  * top level (from a core/injected message).
  */
-type HttpResponseInput = Input<
+type HttpOutInput = Input<
   Port<{
     payload?: unknown;
     statusCode?: number | string;
@@ -32,29 +32,29 @@ type HttpResponseInput = Input<
   }>
 >;
 
-export default class HttpResponse extends IONode<
+export default class HttpOut extends IONode<
   Config,
   unknown,
-  HttpResponseInput,
+  HttpOutInput,
   never
 > {
-  static override readonly type = "http-response";
+  static override readonly type = "http-out";
   static override readonly category = "network";
   static override readonly color = "#e7e7ae";
   static override readonly configSchema = ConfigsSchema;
 
-  override async input(msg: HttpResponseInput) {
+  override async input(msg: HttpOutInput) {
     const res = msg[Channels].private.res as ServerResponse | undefined;
     if (!res) {
       this.status({ fill: "yellow", shape: "dot", text: "no request" });
       this.warn(
-        "http-response: no live response on the private channel — already " +
+        "http-out: no live response on the private channel — already " +
           "answered, expired, or not wired from an http-in in this package.",
       );
       return;
     }
     // Claim it up front — a request is answered exactly once, so a second
-    // http-response for the same signal finds nothing (like the old registry take).
+    // http-out for the same signal finds nothing (like the old registry take).
     delete msg[Channels].private.res;
 
     // Values ride under `output` when wired from another nrg node; fall back to
@@ -75,7 +75,7 @@ export default class HttpResponse extends IONode<
     } catch (error) {
       this.status({ fill: "red", shape: "dot", text: "response failed" });
       this.error(
-        `http-response: ${error instanceof Error ? error.message : String(error)}`,
+        `http-out: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
