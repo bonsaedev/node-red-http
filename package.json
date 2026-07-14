@@ -16,7 +16,13 @@
     "node": ">=22",
     "pnpm": ">=10.11.0"
   },
-  "keywords": ["node-red", "nrg", "bonsae", "http", "fetch"],
+  "keywords": [
+    "node-red",
+    "nrg",
+    "bonsae",
+    "http",
+    "fetch"
+  ],
   "scripts": {
     "dev": "vite --mode development",
     "build": "vite build --mode production",
@@ -34,12 +40,19 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "src/**/*.{ts,vue}": ["eslint --fix", "prettier --write"],
-    "tests/**/*.ts": ["prettier --write"],
-    "src/**/*.json": ["prettier --write"]
+    "src/**/*.{ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "tests/**/*.ts": [
+      "prettier --write"
+    ],
+    "src/**/*.json": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
-    "@bonsae/nrg": "^0.39.0",
+    "@bonsae/nrg": "^0.40.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@types/node": "^22.15.18",
