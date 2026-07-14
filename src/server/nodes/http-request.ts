@@ -31,7 +31,7 @@ type HttpRequestInput = Input<
  * is a string (ret=txt), a Buffer (ret=bin), or parsed JSON (ret=obj).
  */
 type HttpRequestOutputs = Outputs<{
-  out: Port<{
+  response: Port<{
     statusCode: number;
     headers: Record<string, string>;
     payload: string | Buffer | unknown;
@@ -123,7 +123,7 @@ export default class HttpRequest extends IONode<
         shape: "dot",
         text: `${res.status}`,
       });
-      this.send("out", {
+      this.send("response", {
         statusCode: res.status,
         headers: responseHeaders,
         payload,
@@ -134,7 +134,7 @@ export default class HttpRequest extends IONode<
       this.status({ fill: "red", shape: "dot", text: message });
       // `senderr`: surface the failure as a normal message instead of throwing.
       if (this.config.senderr) {
-        this.send("out", {
+        this.send("response", {
           statusCode: 0,
           headers: {},
           payload: message,
