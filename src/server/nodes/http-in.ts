@@ -3,6 +3,7 @@ import {
   type Infer,
   type Outputs,
   type Port,
+  type RED,
 } from "@bonsae/nrg/server";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { ConfigsSchema } from "../../shared/schemas/http-in";
@@ -37,19 +38,17 @@ type HttpInOutputs = Outputs<{
  * socket) owns its release — so http-in ends it. */
 const RESPONSE_TIMEOUT_MS = 5 * 60_000;
 
-/** The Express app RED.httpNode exposes for user routes (loosely typed). */
-interface HttpApp {
-  get(path: string, ...handlers: unknown[]): void;
-  post(path: string, ...handlers: unknown[]): void;
-  put(path: string, ...handlers: unknown[]): void;
-  delete(path: string, ...handlers: unknown[]): void;
-  patch(path: string, ...handlers: unknown[]): void;
+/** `RED.httpNode` is Node-RED's user-facing Express app (typed by nrg). Express
+ *  keeps its registered routes on the internal `app._router.stack`, which the
+ *  public Express types don't model — the same internal core `http in` splices to
+ *  drop its own route on redeploy, so re-deploying doesn't stack routes. */
+type UserHttpServer = RED["httpNode"] & {
   _router?: {
     stack: Array<{
       route?: { path?: string; methods?: Record<string, boolean> };
     }>;
   };
-}
+};
 
 /** Express-decorated request (query/params/body populated by its middleware). */
 type ExpressRequest = IncomingMessage & {
@@ -62,7 +61,7 @@ const BODY_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 export default class HttpIn extends IONode<
   Config,
-  unknown,
+  never,
   never,
   HttpInOutputs
 > {
@@ -71,7 +70,7 @@ export default class HttpIn extends IONode<
   static override readonly color = "#e7e7ae";
   static override readonly configSchema = ConfigsSchema;
 
-  #app?: HttpApp;
+  #app?: UserHttpServer;
   #url?: string;
   #method?: string;
 
@@ -83,19 +82,38 @@ export default class HttpIn extends IONode<
       throw new Error("http-in: no url path configured");
     }
 
-    const app = this.RED.httpNode as unknown as HttpApp | undefined;
-    const register = app?.[method as keyof HttpApp] as
-      ((path: string, ...handlers: unknown[]) => void) | undefined;
-    if (typeof register !== "function") {
-      this.status({ fill: "red", shape: "dot", text: "no HTTP server" });
-      throw new Error("http-in: RED.httpNode is not available");
+    const httpNode = this.RED.httpNode;
+    const handler = (req: IncomingMessage, res: ServerResponse) => {
+      void this.#onRequest(req as ExpressRequest, res);
+    };
+    // RED.httpNode is a typed Express app — register the route on the matcher for
+    // this method (the schema constrains it to these five).
+    switch (method) {
+      case "get":
+        httpNode.get(url, handler);
+        break;
+      case "post":
+        httpNode.post(url, handler);
+        break;
+      case "put":
+        httpNode.put(url, handler);
+        break;
+      case "delete":
+        httpNode.delete(url, handler);
+        break;
+      case "patch":
+        httpNode.patch(url, handler);
+        break;
+      default:
+        this.status({
+          fill: "red",
+          shape: "dot",
+          text: `unsupported: ${method}`,
+        });
+        throw new Error(`http-in: unsupported HTTP method "${method}"`);
     }
 
-    register.call(app, url, (req: IncomingMessage, res: ServerResponse) => {
-      void this.#onRequest(req as ExpressRequest, res);
-    });
-
-    this.#app = app;
+    this.#app = httpNode;
     this.#url = url;
     this.#method = method;
     this.status({

@@ -34,7 +34,7 @@ type HttpOutInput = Input<
 
 export default class HttpOut extends IONode<
   Config,
-  unknown,
+  never,
   HttpOutInput,
   never
 > {
