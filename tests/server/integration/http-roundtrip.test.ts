@@ -15,15 +15,15 @@ import HttpOut from "../../../src/server/nodes/http-out";
 
 /**
  * A minimal intermediate nrg node: reads the payload off the envelope and
- * re-emits it under the DEFAULT carry mode. Used to prove `_msgid` correlation
- * survives an nrg node between http-in and http-out (no trace required) —
- * which only works because nrg carries `_msgid` forward, so the PRIVATE channel
- * holding the live `res` is still recoverable downstream.
+ * re-emits it under the DEFAULT passthrough mode. Used to prove `_msgid`
+ * correlation survives an nrg node between http-in and http-out — which only
+ * works because nrg carries `_msgid` forward, so the PRIVATE channel holding
+ * the live `res` is still recoverable downstream.
  */
 type PassthroughInput = Input<Port<{ output: { payload: unknown } }>>;
 class Passthrough extends IONode<
   Record<string, never>,
-  unknown,
+  never,
   PassthroughInput,
   Outputs<[Port<{ payload: unknown }>]>
 > {
@@ -46,7 +46,7 @@ type DelayInput = Input<
 >;
 class Delay extends IONode<
   Record<string, never>,
-  unknown,
+  never,
   DelayInput,
   Outputs<[Port<{ payload: unknown }>]>
 > {
@@ -116,8 +116,8 @@ describe("http-in → http-out (real HTTP round-trip)", () => {
     expect(await res.json()).toEqual({ name: "world" });
   });
 
-  it("correlates through an intermediate nrg node (via _msgid, no trace)", async () => {
-    // http-in → passthrough (an nrg node, default carry mode) → http-out.
+  it("correlates through an intermediate nrg node (via _msgid)", async () => {
+    // http-in → passthrough (an nrg node, default passthrough mode) → http-out.
     // This works ONLY because nrg preserves `_msgid` across the node — the whole
     // point of the fix. The passthrough re-emits the query under the envelope.
     const flow = runtime.flow();
@@ -186,12 +186,39 @@ describe("http-in → http-out (real HTTP round-trip)", () => {
     expect(await res.json()).toEqual({ hi: "there" });
   });
 
-  it("404s a path with no matching http-in route", async () => {
+  it("PATCH: parses the JSON body and echoes it (non-POST body method)", async () => {
     const flow = runtime.flow();
-    flow.addNode(HttpIn, { method: "get", url: "/present" });
+    flow.addNode(HttpIn, { method: "patch", url: "/patch" }).wire(
+      flow.addNode(HttpOut, {
+        statusCode: "",
+        headers: { type: "json", value: "{}" },
+      }),
+    );
     await flow.deploy();
 
-    const res = await fetch(`${baseUrl}/absent`);
-    expect(res.status).toBe(404);
+    const res = await fetch(`${baseUrl}/patch`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ patched: true }),
+    });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ patched: true });
+  });
+
+  it("serves the registered route and 404s everything else", async () => {
+    const flow = runtime.flow();
+    flow.addNode(HttpIn, { method: "get", url: "/present" }).wire(
+      flow.addNode(HttpOut, {
+        statusCode: "",
+        headers: { type: "json", value: "{}" },
+      }),
+    );
+    await flow.deploy();
+
+    // The registered route is actually served (200) — this is what proves the
+    // node did the wiring, not Express's default handler...
+    expect((await fetch(`${baseUrl}/present`)).status).toBe(200);
+    // ...and an unregistered path 404s.
+    expect((await fetch(`${baseUrl}/absent`)).status).toBe(404);
   });
 });
