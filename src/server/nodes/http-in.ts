@@ -33,7 +33,7 @@ type HttpInOutputs = Outputs<{
 }>;
 
 /** 504 an unanswered request after this long so an abandoned socket never hangs.
- * The nrg lane store frees its own reference on a TTL, but the resource (the
+ * The nrg channel store frees its own reference on a TTL, but the resource (the
  * socket) owns its release — so http-in ends it. */
 const RESPONSE_TIMEOUT_MS = 5 * 60_000;
 
