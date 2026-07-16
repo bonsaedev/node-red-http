@@ -15,11 +15,11 @@ author migrating over sees the same knobs.
 
 ## Nodes
 
-| Node | Description |
-| --- | --- |
+| Node             | Description                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **HTTP Request** | Make outbound HTTP requests with native `fetch` — method, mustache URL, auth, return type; response on `msg.output` |
-| **HTTP In** | Listen on a path of Node-RED's HTTP server and emit one message per incoming request |
-| **HTTP Out** | Write the reply back on the live socket for a request started by **HTTP In** |
+| **HTTP In**      | Listen on a path of Node-RED's HTTP server and emit one message per incoming request                                |
+| **HTTP Out**     | Write the reply back on the live socket for a request started by **HTTP In**                                        |
 
 ## Prerequisites
 
@@ -32,8 +32,6 @@ Install into the directory that holds your Node-RED `package.json` (usually
 `~/.node-red`):
 
 ```bash
-pnpm add @bonsae/node-red-http
-# or
 npm install @bonsae/node-red-http
 ```
 
@@ -59,94 +57,12 @@ request to `/hello` gets a reply written back on its own live socket:
 [inject] --> [http-request  GET https://api.example.com/thing] --> [debug]
 ```
 
-<details>
-<summary>Import this flow</summary>
-
-```json
-[
-  {
-    "id": "tab1",
-    "type": "tab",
-    "label": "http-http demo",
-    "disabled": false,
-    "info": ""
-  },
-  {
-    "id": "inject1",
-    "type": "inject",
-    "z": "tab1",
-    "name": "go",
-    "props": [{ "p": "payload" }],
-    "repeat": "",
-    "once": false,
-    "topic": "",
-    "payload": "",
-    "payloadType": "date",
-    "x": 110,
-    "y": 80,
-    "wires": [["req1"]]
-  },
-  {
-    "id": "req1",
-    "type": "http-request",
-    "z": "tab1",
-    "name": "GET example",
-    "method": "GET",
-    "url": { "type": "str", "value": "https://api.example.com/thing" },
-    "ret": "obj",
-    "paytoqs": "ignore",
-    "headers": { "type": "json", "value": "{}" },
-    "authType": "",
-    "persist": false,
-    "insecureHTTPParser": false,
-    "senderr": false,
-    "x": 320,
-    "y": 80,
-    "wires": [["debug1"]]
-  },
-  {
-    "id": "debug1",
-    "type": "debug",
-    "z": "tab1",
-    "name": "response",
-    "active": true,
-    "tosidebar": true,
-    "complete": "output",
-    "targetType": "msg",
-    "x": 540,
-    "y": 80,
-    "wires": []
-  },
-  {
-    "id": "in1",
-    "type": "http-in",
-    "z": "tab1",
-    "name": "hello route",
-    "method": "get",
-    "url": "/hello",
-    "x": 120,
-    "y": 200,
-    "wires": [["out1"]]
-  },
-  {
-    "id": "out1",
-    "type": "http-out",
-    "z": "tab1",
-    "name": "reply",
-    "statusCode": "",
-    "headers": { "type": "json", "value": "{}" },
-    "x": 340,
-    "y": 200,
-    "wires": []
-  }
-]
-```
-
-Paste this into **Menu → Import** in the Node-RED editor and deploy. Hit the
-inject button to fire the outbound request; `curl http://localhost:1880/hello`
-to exercise the server pair.
-
-</details>
+Both flows ship as ready-to-import examples. In the Node-RED editor, open
+**Menu → Import → Examples → `@bonsae/node-red-http`** and pick **HTTP endpoint**
+or **HTTP request** — or browse them in
+[`src/resources/examples/`](src/resources/examples). Deploy, hit the inject
+button to fire the outbound request, and `curl http://localhost:1880/hello` to
+exercise the server pair.
 
 ## Message model
 
@@ -214,25 +130,25 @@ Payload handling depends on **payload** (`paytoqs`) and only runs when
 
 ### Config
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `name` | string | `""` | Editor label for the node instance. |
-| `method` | select | `GET` | HTTP method: `GET` · `POST` · `PUT` · `DELETE` · `HEAD` · `OPTIONS` · `PATCH` · `use`. `use` reads `msg.method` at runtime (defaulting to `GET`). |
-| `url` | typed input (`str` / `msg`) | `{ type: "str", value: "" }` | Request URL. Supports `{{mustache}}` tags resolved against the message. |
-| `ret` | select | `txt` | Return body as: `txt` = UTF-8 string · `bin` = `Buffer` · `obj` = parsed JSON (falls back to raw text if the body isn't JSON, `{}` if empty). |
-| `paytoqs` | select | `ignore` | Send `msg.payload` as: `ignore` = default · `query` = append to URL · `body` = request body. |
-| `headers` | typed input (`json` / `msg`) | `{ type: "json", value: "{}" }` | Static request headers (an object). Merged with `msg.headers`, which overrides. |
-| `authType` | select | `""` | Authentication scheme: `""` (none) · `basic` · `bearer`. |
-| `persist` | boolean | `false` | Keep the TCP connection alive between requests (passed to fetch as `keepalive`). |
-| `insecureHTTPParser` | boolean | `false` | Present in the form only — **not read anywhere in the node code**, so it has no runtime effect (fetch does not expose it). |
-| `senderr` | boolean | `false` | Send request errors to the output instead of failing the node (see Ports). |
+| Field                | Type                         | Default                         | Description                                                                                                                                       |
+| -------------------- | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | string                       | `""`                            | Editor label for the node instance.                                                                                                               |
+| `method`             | select                       | `GET`                           | HTTP method: `GET` · `POST` · `PUT` · `DELETE` · `HEAD` · `OPTIONS` · `PATCH` · `use`. `use` reads `msg.method` at runtime (defaulting to `GET`). |
+| `url`                | typed input (`str` / `msg`)  | `{ type: "str", value: "" }`    | Request URL. Supports `{{mustache}}` tags resolved against the message.                                                                           |
+| `ret`                | select                       | `txt`                           | Return body as: `txt` = UTF-8 string · `bin` = `Buffer` · `obj` = parsed JSON (falls back to raw text if the body isn't JSON, `{}` if empty).     |
+| `paytoqs`            | select                       | `ignore`                        | Send `msg.payload` as: `ignore` = default · `query` = append to URL · `body` = request body.                                                      |
+| `headers`            | typed input (`json` / `msg`) | `{ type: "json", value: "{}" }` | Static request headers (an object). Merged with `msg.headers`, which overrides.                                                                   |
+| `authType`           | select                       | `""`                            | Authentication scheme: `""` (none) · `basic` · `bearer`.                                                                                          |
+| `persist`            | boolean                      | `false`                         | Keep the TCP connection alive between requests (passed to fetch as `keepalive`).                                                                  |
+| `insecureHTTPParser` | boolean                      | `false`                         | Present in the form only — **not read anywhere in the node code**, so it has no runtime effect (fetch does not expose it).                        |
+| `senderr`            | boolean                      | `false`                         | Send request errors to the output instead of failing the node (see Ports).                                                                        |
 
 ### Credentials
 
-| Field | Description |
-| --- | --- |
-| `user` | Username for `basic` auth. Used to build the Basic token. Stored encrypted. |
-| `password` | Password for `basic` auth (masked input). Stored encrypted. |
+| Field         | Description                                                                                                                  |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `user`        | Username for `basic` auth. Used to build the Basic token. Stored encrypted.                                                  |
+| `password`    | Password for `basic` auth (masked input). Stored encrypted.                                                                  |
 | `bearerToken` | Token for `bearer` auth (masked input). Sent as `Authorization: Bearer <token>`, only when a token exists. Stored encrypted. |
 
 Auth application by `authType`: **basic** → `Authorization: Basic base64(user:password)`;
@@ -244,12 +160,12 @@ Auth application by `authType`: **basic** → `Authorization: Basic base64(user:
 **Input** — `Input<Port<{ payload?; method?; url?; headers? }>>` (label: _Request_).
 The following `msg` properties override config at runtime:
 
-| `msg` property | Effect |
-| --- | --- |
-| `msg.method` | Overrides `config.method` **only** when `config.method === "use"` (else falls back to `GET`). |
-| `msg.url` | Takes precedence over the configured `url` typed input. |
-| `msg.headers` | Merged over (overrides) the configured headers. |
-| `msg.payload` | Request body / query-string source, per `paytoqs`. |
+| `msg` property | Effect                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------- |
+| `msg.method`   | Overrides `config.method` **only** when `config.method === "use"` (else falls back to `GET`). |
+| `msg.url`      | Takes precedence over the configured `url` typed input.                                       |
+| `msg.headers`  | Merged over (overrides) the configured headers.                                               |
+| `msg.payload`  | Request body / query-string source, per `paytoqs`.                                            |
 
 **Output** — port `response` (label: _Response_):
 `Port<{ statusCode: number; headers: Record<string,string>; payload: string | Buffer | unknown; responseUrl: string }>`.
@@ -292,11 +208,11 @@ get `body = undefined`.
 
 ### Config
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `name` | string | `""` | Editor label for the node instance. |
-| `method` | select | `get` | HTTP method to listen for: `get` · `post` · `put` · `delete` · `patch`. |
-| `url` | string | `""` | Path to listen on, e.g. `/hello` or `/user/:id`. Normalized to a leading slash. |
+| Field    | Type   | Default | Description                                                                     |
+| -------- | ------ | ------- | ------------------------------------------------------------------------------- |
+| `name`   | string | `""`    | Editor label for the node instance.                                             |
+| `method` | select | `get`   | HTTP method to listen for: `get` · `post` · `put` · `delete` · `patch`.         |
+| `url`    | string | `""`    | Path to listen on, e.g. `/hello` or `/user/:id`. Normalized to a leading slash. |
 
 ### Ports
 
@@ -315,7 +231,7 @@ is no wire input — it is driven only by incoming HTTP requests).
     query: Record<string, unknown>;
     params: Record<string, string>;
     body: unknown;
-  };
+  }
 }
 ```
 
@@ -363,24 +279,24 @@ Reply derivation:
 
 ### Config
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `name` | string | `""` | Editor label for the node instance. |
-| `statusCode` | string | `""` | Status code. Blank → `msg.statusCode`, else `200`. |
-| `headers` | typed input (`json` / `msg`) | `{ type: "json", value: "{}" }` | Response headers (an object). Resolved config headers are merged first, then message headers override. |
+| Field        | Type                         | Default                         | Description                                                                                            |
+| ------------ | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `name`       | string                       | `""`                            | Editor label for the node instance.                                                                    |
+| `statusCode` | string                       | `""`                            | Status code. Blank → `msg.statusCode`, else `200`.                                                     |
+| `headers`    | typed input (`json` / `msg`) | `{ type: "json", value: "{}" }` | Response headers (an object). Resolved config headers are merged first, then message headers override. |
 
 ### Ports
 
 **Input** — `Input<Port<{ payload?; statusCode?; headers?; output?; [key]: unknown }>>`
 (label: _Response_). Reply-source precedence:
 
-| Source | Effect |
-| --- | --- |
-| `msg.output` | Preferred source when wired from another nrg node (`src = msg.output ?? msg`). |
-| top-level `msg` | Fallback source for a raw/injected message. |
-| `src.statusCode` | Overrides `config.statusCode` (may be number or string). |
-| `src.headers` | Merged over (overrides) resolved `config.headers`. |
-| `src.payload` | The response body. |
+| Source           | Effect                                                                         |
+| ---------------- | ------------------------------------------------------------------------------ |
+| `msg.output`     | Preferred source when wired from another nrg node (`src = msg.output ?? msg`). |
+| top-level `msg`  | Fallback source for a raw/injected message.                                    |
+| `src.statusCode` | Overrides `config.statusCode` (may be number or string).                       |
+| `src.headers`    | Merged over (overrides) resolved `config.headers`.                             |
+| `src.payload`    | The response body.                                                             |
 
 **Output** — none (sink node; the output generic is `never`).
 
@@ -400,11 +316,11 @@ Reply derivation:
 
 ## Compatibility
 
-| | Version |
-| --- | --- |
-| Node-RED | 5.x |
-| `@bonsae/nrg` | `^0.41.0` |
-| Node.js | `>= 22` |
+|                        | Version      |
+| ---------------------- | ------------ |
+| Node-RED               | 5.x          |
+| `@bonsae/nrg`          | `^0.41.0`    |
+| Node.js                | `>= 22`      |
 | pnpm (for development) | `>= 10.11.0` |
 
 Registration is handled entirely through `@bonsae/nrg` (`defineModule`), not the

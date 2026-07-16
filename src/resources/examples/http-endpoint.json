@@ -1,0 +1,31 @@
+[
+  {
+    "id": "srv_tab",
+    "type": "tab",
+    "label": "HTTP endpoint example",
+    "disabled": false,
+    "info": "A tiny web endpoint: http-in listens on GET /hello and http-out writes the reply back on the live socket. The response echoes the incoming request (http-out reads msg.output when none is set). Deploy, then run: curl http://localhost:1880/hello"
+  },
+  {
+    "id": "srv_in",
+    "type": "http-in",
+    "z": "srv_tab",
+    "name": "hello route",
+    "method": "get",
+    "url": "/hello",
+    "x": 140,
+    "y": 100,
+    "wires": [["srv_out"]]
+  },
+  {
+    "id": "srv_out",
+    "type": "http-out",
+    "z": "srv_tab",
+    "name": "reply",
+    "statusCode": "",
+    "headers": { "type": "json", "value": "{}" },
+    "x": 360,
+    "y": 100,
+    "wires": []
+  }
+]

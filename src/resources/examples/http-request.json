@@ -1,0 +1,55 @@
+[
+  {
+    "id": "req_tab",
+    "type": "tab",
+    "label": "HTTP request example",
+    "disabled": false,
+    "info": "Fire an outbound GET with http-request and inspect the response in the debug sidebar. Point the URL at any JSON API. The response arrives on msg.output = { statusCode, headers, payload, responseUrl }."
+  },
+  {
+    "id": "req_inject",
+    "type": "inject",
+    "z": "req_tab",
+    "name": "go",
+    "props": [{ "p": "payload" }],
+    "repeat": "",
+    "once": false,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 110,
+    "y": 100,
+    "wires": [["req_node"]]
+  },
+  {
+    "id": "req_node",
+    "type": "http-request",
+    "z": "req_tab",
+    "name": "GET example",
+    "method": "GET",
+    "url": { "type": "str", "value": "https://api.example.com/thing" },
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "headers": { "type": "json", "value": "{}" },
+    "authType": "",
+    "persist": false,
+    "insecureHTTPParser": false,
+    "senderr": false,
+    "x": 320,
+    "y": 100,
+    "wires": [["req_debug"]]
+  },
+  {
+    "id": "req_debug",
+    "type": "debug",
+    "z": "req_tab",
+    "name": "response",
+    "active": true,
+    "tosidebar": true,
+    "complete": "output",
+    "targetType": "msg",
+    "x": 520,
+    "y": 100,
+    "wires": []
+  }
+]
