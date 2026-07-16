@@ -39,7 +39,6 @@ const payloadModes = computed(() => [
 const authTypes = computed(() => [
   { value: "", label: t("options.authType.none") },
   { value: "basic", label: t("options.authType.basic") },
-  { value: "digest", label: t("options.authType.digest") },
   { value: "bearer", label: t("options.authType.bearer") },
 ]);
 </script>
@@ -107,7 +106,7 @@ const authTypes = computed(() => [
     />
   </div>
 
-  <template v-if="node.authType === 'basic' || node.authType === 'digest'">
+  <template v-if="node.authType === 'basic'">
     <div class="form-row">
       <NodeRedInput
         v-model:value="node.credentials.user"

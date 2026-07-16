@@ -35,7 +35,6 @@
     "authType": {
       "none": "keine Authentifizierung",
       "basic": "Basic-Authentifizierung",
-      "digest": "Digest-Authentifizierung",
       "bearer": "Bearer-Token"
     }
   },

@@ -35,7 +35,6 @@
     "authType": {
       "none": "인증 없음",
       "basic": "기본 인증",
-      "digest": "다이제스트 인증",
       "bearer": "베어러 토큰"
     }
   },

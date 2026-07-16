@@ -163,12 +163,6 @@ export default class HttpRequest extends IONode<
         }
         break;
       }
-      case "digest": {
-        // Digest is a 401-challenge/response handshake fetch doesn't do natively.
-        throw new Error(
-          "digest authentication is not supported yet — use basic or bearer",
-        );
-      }
     }
   }
 

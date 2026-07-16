@@ -73,7 +73,6 @@ export const ConfigsSchema = defineSchema(
       [
         SchemaType.Literal(""),
         SchemaType.Literal("basic"),
-        SchemaType.Literal("digest"),
         SchemaType.Literal("bearer"),
       ],
       {
@@ -100,7 +99,7 @@ export const ConfigsSchema = defineSchema(
 );
 
 /**
- * Basic/digest use user + password; bearer uses bearerToken. Stored as Node-RED
+ * Basic uses user + password; bearer uses bearerToken. Stored as Node-RED
  * credentials (encrypted, not in the flow file). `format: "password"` renders a
  * masked input in the editor.
  */
@@ -108,12 +107,12 @@ export const CredentialsSchema = defineSchema(
   {
     user: SchemaType.String({
       default: "",
-      description: "Username (basic / digest auth)",
+      description: "Username (basic auth)",
     }),
     password: SchemaType.String({
       default: "",
       format: "password",
-      description: "Password (basic / digest auth)",
+      description: "Password (basic auth)",
     }),
     bearerToken: SchemaType.String({
       default: "",

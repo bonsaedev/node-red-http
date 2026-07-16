@@ -222,7 +222,7 @@ Payload handling depends on **payload** (`paytoqs`) and only runs when
 | `ret` | select | `txt` | Return body as: `txt` = UTF-8 string · `bin` = `Buffer` · `obj` = parsed JSON (falls back to raw text if the body isn't JSON, `{}` if empty). |
 | `paytoqs` | select | `ignore` | Send `msg.payload` as: `ignore` = default · `query` = append to URL · `body` = request body. |
 | `headers` | typed input (`json` / `msg`) | `{ type: "json", value: "{}" }` | Static request headers (an object). Merged with `msg.headers`, which overrides. |
-| `authType` | select | `""` | Authentication scheme: `""` (none) · `basic` · `digest` · `bearer`. |
+| `authType` | select | `""` | Authentication scheme: `""` (none) · `basic` · `bearer`. |
 | `persist` | boolean | `false` | Keep the TCP connection alive between requests (passed to fetch as `keepalive`). |
 | `insecureHTTPParser` | boolean | `false` | Present in the form only — **not read anywhere in the node code**, so it has no runtime effect (fetch does not expose it). |
 | `senderr` | boolean | `false` | Send request errors to the output instead of failing the node (see Ports). |
@@ -237,7 +237,6 @@ Payload handling depends on **payload** (`paytoqs`) and only runs when
 
 Auth application by `authType`: **basic** → `Authorization: Basic base64(user:password)`;
 **bearer** → `Authorization: Bearer <bearerToken>` (only if a token is set);
-**digest** → throws `digest authentication is not supported yet — use basic or bearer`;
 **`""`** (none) → no header.
 
 ### Ports
@@ -259,8 +258,6 @@ The following `msg` properties override config at runtime:
 
 - `insecureHTTPParser` is in the schema and form but never referenced in code —
   it has **no runtime effect**.
-- `digest` is a selectable option (and has a label), but throws at runtime — it
-  is not implemented yet; use `basic` or `bearer`.
 - A scheme-less URL is auto-prefixed with `http://`, not `https://`.
 - `paytoqs: "ignore"` still sends `msg.payload` as the body for non-`GET`/`HEAD`
   methods; `GET`/`HEAD` never carry a body under `ignore`.

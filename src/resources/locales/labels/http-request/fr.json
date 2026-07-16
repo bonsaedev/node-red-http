@@ -35,7 +35,6 @@
     "authType": {
       "none": "aucune authentification",
       "basic": "authentification basique",
-      "digest": "authentification digest",
       "bearer": "jeton bearer"
     }
   },

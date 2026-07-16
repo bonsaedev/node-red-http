@@ -35,7 +35,6 @@
     "authType": {
       "none": "認証なし",
       "basic": "Basic 認証",
-      "digest": "ダイジェスト認証",
       "bearer": "ベアラートークン"
     }
   },

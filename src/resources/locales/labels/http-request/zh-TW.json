@@ -35,7 +35,6 @@
     "authType": {
       "none": "無身份驗證",
       "basic": "基本身份驗證",
-      "digest": "摘要身份驗證",
       "bearer": "Bearer 權杖"
     }
   },

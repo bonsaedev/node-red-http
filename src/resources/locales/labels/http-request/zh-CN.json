@@ -35,7 +35,6 @@
     "authType": {
       "none": "无身份验证",
       "basic": "基本身份验证",
-      "digest": "摘要身份验证",
       "bearer": "Bearer 令牌"
     }
   },
