@@ -38,5 +38,15 @@
       "digest": "Digest-Authentifizierung",
       "bearer": "Bearer-Token"
     }
+  },
+  "input": {
+    "label": "Anfrage",
+    "description": "Die zu sendende Anfrage. msg.method, msg.url, msg.headers und msg.payload überschreiben die konfigurierten Werte zur Laufzeit."
+  },
+  "outputs": {
+    "response": {
+      "label": "Antwort",
+      "description": "Die HTTP-Antwort: Statuscode, Header und der Körper als Zeichenkette, als Binärpuffer oder als geparstes JSON."
+    }
   }
 }

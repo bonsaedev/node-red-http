@@ -38,5 +38,15 @@
       "digest": "다이제스트 인증",
       "bearer": "베어러 토큰"
     }
+  },
+  "input": {
+    "label": "요청",
+    "description": "보낼 요청. msg.method, msg.url, msg.headers, msg.payload는 런타임에 설정된 값을 재정의합니다."
+  },
+  "outputs": {
+    "response": {
+      "label": "응답",
+      "description": "HTTP 응답: 상태 코드, 헤더, 그리고 문자열, 바이너리 버퍼 또는 파싱된 JSON 형태의 본문."
+    }
   }
 }

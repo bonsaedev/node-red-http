@@ -5,5 +5,9 @@
     "name": "Nome",
     "statusCode": "Código de status",
     "headers": "Cabeçalhos"
+  },
+  "input": {
+    "label": "Resposta",
+    "description": "A resposta para a requisição HTTP pendente — corpo, código de status e cabeçalhos, lidos de output (um nó nrg) ou do nível superior (uma mensagem do núcleo ou injetada)."
   }
 }

@@ -5,5 +5,11 @@
     "name": "Nombre",
     "method": "Método",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "Petición",
+      "description": "Un mensaje por cada petición HTTP entrante — el payload y una instantánea de la petición (method, url, headers, query, params, body). La respuesta en vivo viaja por el canal privado hasta http-out."
+    }
   }
 }

@@ -38,5 +38,15 @@
       "digest": "摘要身份驗證",
       "bearer": "Bearer 權杖"
     }
+  },
+  "input": {
+    "label": "請求",
+    "description": "要傳送的請求。msg.method、msg.url、msg.headers 和 msg.payload 會在執行時覆寫已設定的值。"
+  },
+  "outputs": {
+    "response": {
+      "label": "回應",
+      "description": "HTTP 回應：狀態碼、標頭，以及作為字串、二進位緩衝區或解析後的 JSON 的主體。"
+    }
   }
 }

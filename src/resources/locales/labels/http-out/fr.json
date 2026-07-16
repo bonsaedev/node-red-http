@@ -5,5 +5,9 @@
     "name": "Nom",
     "statusCode": "Code de statut",
     "headers": "En-têtes"
+  },
+  "input": {
+    "label": "Réponse",
+    "description": "La réponse à la requête HTTP en attente — corps, code de statut et en-têtes, lus depuis output (un nœud nrg) ou depuis le niveau supérieur (un message du cœur ou injecté)."
   }
 }

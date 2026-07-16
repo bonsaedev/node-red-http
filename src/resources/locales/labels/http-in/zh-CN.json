@@ -5,5 +5,11 @@
     "name": "名称",
     "method": "方法",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "请求",
+      "description": "每个传入的 HTTP 请求对应一条消息 — 载荷以及请求的快照（method、url、headers、query、params、body）。实时响应通过私有通道传送到 http-out。"
+    }
   }
 }

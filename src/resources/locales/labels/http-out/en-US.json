@@ -5,5 +5,9 @@
     "name": "Name",
     "statusCode": "Status code",
     "headers": "Headers"
+  },
+  "input": {
+    "label": "Response",
+    "description": "The reply for the pending HTTP request — body, status code, and headers, read from output (an nrg node) or the top level (a core or injected message)."
   }
 }

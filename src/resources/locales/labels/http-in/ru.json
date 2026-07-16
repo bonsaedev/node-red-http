@@ -5,5 +5,11 @@
     "name": "Имя",
     "method": "Метод",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "Запрос",
+      "description": "Одно сообщение на каждый входящий HTTP-запрос — полезная нагрузка и снимок запроса (method, url, headers, query, params, body). Живой ответ идёт по приватному каналу к http-out."
+    }
   }
 }

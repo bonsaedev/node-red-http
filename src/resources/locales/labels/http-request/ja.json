@@ -38,5 +38,15 @@
       "digest": "ダイジェスト認証",
       "bearer": "ベアラートークン"
     }
+  },
+  "input": {
+    "label": "リクエスト",
+    "description": "送信するリクエスト。msg.method、msg.url、msg.headers、msg.payload は実行時に設定値を上書きします。"
+  },
+  "outputs": {
+    "response": {
+      "label": "レスポンス",
+      "description": "HTTP レスポンス: ステータスコード、ヘッダー、および文字列・バイナリバッファ・解析済み JSON としてのボディ。"
+    }
   }
 }

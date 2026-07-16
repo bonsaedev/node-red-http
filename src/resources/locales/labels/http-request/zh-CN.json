@@ -38,5 +38,15 @@
       "digest": "摘要身份验证",
       "bearer": "Bearer 令牌"
     }
+  },
+  "input": {
+    "label": "请求",
+    "description": "要发送的请求。msg.method、msg.url、msg.headers 和 msg.payload 会在运行时覆盖已配置的值。"
+  },
+  "outputs": {
+    "response": {
+      "label": "响应",
+      "description": "HTTP 响应：状态码、标头，以及作为字符串、二进制缓冲区或解析后的 JSON 的正文。"
+    }
   }
 }

@@ -38,5 +38,15 @@
       "digest": "digest authentication",
       "bearer": "bearer token"
     }
+  },
+  "input": {
+    "label": "Request",
+    "description": "The request to send. msg.method, msg.url, msg.headers, and msg.payload override the configured values at runtime."
+  },
+  "outputs": {
+    "response": {
+      "label": "Response",
+      "description": "The HTTP response: status code, headers, and the body as a string, a binary buffer, or parsed JSON."
+    }
   }
 }

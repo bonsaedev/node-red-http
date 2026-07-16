@@ -5,5 +5,11 @@
     "name": "名稱",
     "method": "方法",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "請求",
+      "description": "每個傳入的 HTTP 請求對應一則訊息 — 酬載以及請求的快照（method、url、headers、query、params、body）。即時回應透過私有通道傳送到 http-out。"
+    }
   }
 }

@@ -38,5 +38,15 @@
       "digest": "autenticação digest",
       "bearer": "token bearer"
     }
+  },
+  "input": {
+    "label": "Requisição",
+    "description": "A requisição a enviar. msg.method, msg.url, msg.headers e msg.payload substituem os valores configurados em tempo de execução."
+  },
+  "outputs": {
+    "response": {
+      "label": "Resposta",
+      "description": "A resposta HTTP: código de status, cabeçalhos e o corpo como uma string, um buffer binário ou JSON analisado."
+    }
   }
 }

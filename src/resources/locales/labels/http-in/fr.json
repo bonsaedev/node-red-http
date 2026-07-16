@@ -5,5 +5,11 @@
     "name": "Nom",
     "method": "Méthode",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "Requête",
+      "description": "Un message par requête HTTP entrante — le payload et un instantané de la requête (method, url, headers, query, params, body). La réponse en direct emprunte le canal privé vers http-out."
+    }
   }
 }

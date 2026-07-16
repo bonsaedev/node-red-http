@@ -5,5 +5,11 @@
     "name": "名前",
     "method": "メソッド",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "リクエスト",
+      "description": "受信した HTTP リクエストごとに 1 つのメッセージ — ペイロードとリクエストのスナップショット（method、url、headers、query、params、body）。ライブレスポンスはプライベートチャネルを通って http-out へ送られます。"
+    }
   }
 }

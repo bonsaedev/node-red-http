@@ -5,5 +5,11 @@
     "name": "Nome",
     "method": "Método",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "Requisição",
+      "description": "Uma mensagem por requisição HTTP recebida — o payload e um instantâneo da requisição (method, url, headers, query, params, body). A resposta ao vivo trafega pelo canal privado até o http-out."
+    }
   }
 }

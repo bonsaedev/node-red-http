@@ -5,5 +5,11 @@
     "name": "Name",
     "method": "Method",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "Request",
+      "description": "One message per incoming HTTP request — the payload and a snapshot of the request (method, url, headers, query, params, body). The live response travels the private channel to http-out."
+    }
   }
 }

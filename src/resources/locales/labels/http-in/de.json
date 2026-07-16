@@ -5,5 +5,11 @@
     "name": "Name",
     "method": "Methode",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "Anfrage",
+      "description": "Eine Nachricht pro eingehender HTTP-Anfrage — der Payload und eine Momentaufnahme der Anfrage (method, url, headers, query, params, body). Die Live-Antwort läuft über den privaten Kanal zu http-out."
+    }
   }
 }

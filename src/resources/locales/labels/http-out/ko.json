@@ -5,5 +5,9 @@
     "name": "이름",
     "statusCode": "상태 코드",
     "headers": "헤더"
+  },
+  "input": {
+    "label": "응답",
+    "description": "대기 중인 HTTP 요청에 대한 응답 — 본문, 상태 코드, 헤더. output(nrg 노드) 또는 최상위 레벨(코어 또는 주입된 메시지)에서 읽습니다."
   }
 }

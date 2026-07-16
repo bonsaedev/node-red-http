@@ -5,5 +5,11 @@
     "name": "이름",
     "method": "메서드",
     "url": "URL"
+  },
+  "outputs": {
+    "out": {
+      "label": "요청",
+      "description": "수신되는 HTTP 요청마다 하나의 메시지 — 페이로드와 요청 스냅샷(method, url, headers, query, params, body). 라이브 응답은 프라이빗 채널을 통해 http-out으로 전달됩니다."
+    }
   }
 }

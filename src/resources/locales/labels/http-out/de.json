@@ -5,5 +5,9 @@
     "name": "Name",
     "statusCode": "Statuscode",
     "headers": "Header"
+  },
+  "input": {
+    "label": "Antwort",
+    "description": "Die Antwort auf die ausstehende HTTP-Anfrage — Körper, Statuscode und Header, gelesen aus output (ein nrg-Node) oder von der obersten Ebene (eine Kern- oder eingespeiste Nachricht)."
   }
 }

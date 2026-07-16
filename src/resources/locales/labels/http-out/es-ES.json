@@ -5,5 +5,9 @@
     "name": "Nombre",
     "statusCode": "Código de estado",
     "headers": "Cabeceras"
+  },
+  "input": {
+    "label": "Respuesta",
+    "description": "La respuesta para la petición HTTP pendiente — cuerpo, código de estado y cabeceras, leídos de output (un nodo nrg) o del nivel superior (un mensaje del núcleo o inyectado)."
   }
 }

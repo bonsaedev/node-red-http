@@ -38,5 +38,15 @@
       "digest": "authentification digest",
       "bearer": "jeton bearer"
     }
+  },
+  "input": {
+    "label": "Requête",
+    "description": "La requête à envoyer. msg.method, msg.url, msg.headers et msg.payload remplacent les valeurs configurées à l'exécution."
+  },
+  "outputs": {
+    "response": {
+      "label": "Réponse",
+      "description": "La réponse HTTP : code de statut, en-têtes et le corps sous forme de chaîne, de tampon binaire ou de JSON analysé."
+    }
   }
 }

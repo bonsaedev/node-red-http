@@ -5,5 +5,9 @@
     "name": "名稱",
     "statusCode": "狀態碼",
     "headers": "標頭"
+  },
+  "input": {
+    "label": "回應",
+    "description": "對待處理 HTTP 請求的回覆 — 主體、狀態碼和標頭，從 output（一個 nrg 節點）或頂層（一個核心或注入的訊息）讀取。"
   }
 }
