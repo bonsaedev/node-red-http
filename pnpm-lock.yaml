@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@bonsae/nrg':
-        specifier: ^0.40.0
-        version: 0.40.0(@types/node@22.20.1)(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@vitest/coverage-v8@4.1.10)(eslint@9.39.5(jiti@2.7.0))(rollup@4.62.2)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))(vitest@4.1.10)(vue-eslint-parser@10.4.1(eslint@9.39.5(jiti@2.7.0)))(vue@3.5.39(typescript@5.9.3))
+        specifier: ^0.41.0
+        version: 0.41.0(@types/node@22.20.1)(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@vitest/coverage-v8@4.1.10)(eslint@9.39.5(jiti@2.7.0))(rollup@4.62.2)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))(vitest@4.1.10)(vue-eslint-parser@10.4.1(eslint@9.39.5(jiti@2.7.0)))(vue@3.5.39(typescript@5.9.3))
       '@commitlint/cli':
         specifier: ^20.5.0
         version: 20.5.3(@types/node@22.20.1)(conventional-commits-parser@6.4.0)(typescript@5.9.3)
@@ -91,8 +91,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@bonsae/nrg@0.40.0':
-    resolution: {integrity: sha512-k1Qnqx7ZJO3ZH6atdu6R/fu3ZevEscAHcagt0QwSSf8fNJt59G6sCIQDt8/yGaQ/LUgplgG546BOFZMraxXFNg==}
+  '@bonsae/nrg@0.41.0':
+    resolution: {integrity: sha512-97UgZ4BsDumbdrs2I2tgt8XRNidKv77/NwOAYSXkggutcX+w30e47aHsvDpEbupG08Dp8pQ0yVcIrJE77hEVQA==}
     engines: {node: '>=20.19', pnpm: '>=10.11.0'}
     peerDependencies:
       '@vitest/browser-playwright': ^4.0.0
@@ -3172,7 +3172,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@bonsae/nrg@0.40.0(@types/node@22.20.1)(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@vitest/coverage-v8@4.1.10)(eslint@9.39.5(jiti@2.7.0))(rollup@4.62.2)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))(vitest@4.1.10)(vue-eslint-parser@10.4.1(eslint@9.39.5(jiti@2.7.0)))(vue@3.5.39(typescript@5.9.3))':
+  '@bonsae/nrg@0.41.0(@types/node@22.20.1)(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@vitest/coverage-v8@4.1.10)(eslint@9.39.5(jiti@2.7.0))(rollup@4.62.2)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(tsx@4.23.0)(yaml@2.9.0))(vitest@4.1.10)(vue-eslint-parser@10.4.1(eslint@9.39.5(jiti@2.7.0)))(vue@3.5.39(typescript@5.9.3))':
     dependencies:
       '@clack/prompts': 1.7.0
       '@eslint/js': 9.39.5

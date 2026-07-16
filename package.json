@@ -52,7 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@bonsae/nrg": "^0.40.0",
+    "@bonsae/nrg": "^0.41.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@types/node": "^22.15.18",
