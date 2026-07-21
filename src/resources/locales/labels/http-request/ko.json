@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "이름",
-    "method": "메서드",
-    "url": "URL",
-    "paytoqs": "페이로드",
-    "headers": "헤더",
-    "ret": "반환",
-    "authType": "인증",
-    "persist": "연결 유지",
-    "senderr": "요청 오류를 출력으로 보내기",
-    "insecureHTTPParser": "비보안 HTTP 파서 활성화"
+    "name": {
+      "label": "이름",
+      "description": "에디터에서 노드에 표시되는 선택적 레이블."
+    },
+    "method": {
+      "label": "메서드",
+      "description": "사용할 HTTP 메서드입니다. `use`이면 런타임에 msg.method에서 읽습니다."
+    },
+    "url": {
+      "label": "URL",
+      "description": "요청 URL입니다. 메시지에 대한 {{mustache}} 태그를 지원합니다."
+    },
+    "paytoqs": {
+      "label": "페이로드",
+      "description": "msg.payload를 보내는 방식: 무시, 쿼리 문자열에 추가 또는 요청 본문으로 전송."
+    },
+    "headers": {
+      "label": "헤더",
+      "description": "정적 요청 헤더로, msg.headers와 병합됩니다."
+    },
+    "ret": {
+      "label": "반환",
+      "description": "응답 본문의 형식: UTF-8 문자열, 바이너리 버퍼 또는 파싱된 JSON."
+    },
+    "authType": {
+      "label": "인증",
+      "description": "요청에 사용하는 인증 방식."
+    },
+    "persist": {
+      "label": "연결 유지",
+      "description": "요청 간에 TCP 연결을 유지합니다."
+    },
+    "senderr": {
+      "label": "요청 오류를 출력으로 보내기",
+      "description": "노드를 실패시키는 대신 요청 오류를 출력으로 보냅니다."
+    },
+    "insecureHTTPParser": {
+      "label": "비보안 HTTP 파서 활성화",
+      "description": "비보안 파서를 사용하여 잘못된 형식의 HTTP 응답을 허용합니다."
+    }
   },
   "credentials": {
-    "user": "사용자 이름",
-    "password": "비밀번호",
-    "bearerToken": "토큰"
+    "user": {
+      "label": "사용자 이름",
+      "description": "기본 인증에 사용하는 사용자 이름."
+    },
+    "password": {
+      "label": "비밀번호",
+      "description": "기본 인증에 사용하는 비밀번호."
+    },
+    "bearerToken": {
+      "label": "토큰",
+      "description": "베어러 인증에 사용하는 토큰."
+    }
   },
   "options": {
     "method": {

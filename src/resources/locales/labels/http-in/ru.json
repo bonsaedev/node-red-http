@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "Имя",
-    "method": "Метод",
-    "url": "URL"
+    "name": {
+      "label": "Имя",
+      "description": "Необязательная подпись, отображаемая на узле в редакторе."
+    },
+    "method": {
+      "label": "Метод",
+      "description": "HTTP-метод, который прослушивает этот узел."
+    },
+    "url": {
+      "label": "URL",
+      "description": "Путь для прослушивания, например /hello или /user/:id."
+    }
   },
   "outputs": {
     "out": {
       "label": "Запрос",
-      "description": "Одно сообщение на каждый входящий HTTP-запрос — полезная нагрузка и снимок запроса (method, url, headers, query, params, body). Живой ответ идёт по приватному каналу к http-out."
+      "description": "Одно сообщение на каждый входящий HTTP-запрос — полезная нагрузка и снимок запроса (method, url, headers, query, params, body). Подключите выход к узлу http-out, чтобы отправить ответ."
     }
   }
 }

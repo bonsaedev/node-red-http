@@ -17,7 +17,7 @@ author migrating over sees the same knobs.
 
 | Node             | Description                                                                                                         |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **HTTP Request** | Make outbound HTTP requests with native `fetch` — method, mustache URL, auth, return type; response on `msg.output` |
+| **HTTP Request** | Make outbound HTTP requests with native `fetch` — method, mustache URL, auth, return type; merges the response fields onto the message record |
 | **HTTP In**      | Listen on a path of Node-RED's HTTP server and emit one message per incoming request                                |
 | **HTTP Out**     | Write the reply back on the live socket for a request started by **HTTP In**                                        |
 
@@ -69,12 +69,15 @@ exercise the server pair.
 Two nrg conventions make these nodes work; understanding them is enough to wire
 anything.
 
-**1. Sent values ride under `msg.output`.** When an nrg node sends a message, its
-values are wrapped under `msg.output` (with a provenance chain), not spread at
-the top level. So `http-request` emits
-`msg.output = { statusCode, headers, payload, responseUrl }`, and a downstream
-`http-out` reads its reply from `msg.output` when wired from another nrg node
-(falling back to the top-level `msg` for a raw/injected message).
+**1. The message is a single accumulating record.** An nrg node reads the fields
+it needs at the root of `msg` and `send(port, additions)` merges an object of
+named fields onto that same record (`{ ...incoming, ...additions }`) — nothing is
+wrapped in an envelope. So `http-request` merges
+`{ statusCode, headers, payload, responseUrl }` onto the record, and a downstream
+`http-out` reads its reply straight off the root (`msg.payload` / `msg.statusCode`
+/ `msg.headers`) — the same fields whether they were merged on by another nrg node
+or set by a raw/injected message. Provenance rides `msg[Meta].source` (not a data
+key), and lineage rides `_msgid`.
 
 **2. The live response rides the private channel, not the wire.** A live
 `ServerResponse` socket is a non-serializable object — it cannot ride the message
@@ -82,8 +85,8 @@ wire (Node-RED clones messages), and threading a correlation id through every
 intermediate node is brittle. Instead:
 
 - `http-in` parks the live `res` on nrg's **private channel** —
-  `send("out", payload, { private: { res } })` — and emits only a clone-safe
-  request snapshot on the public wire.
+  `send("out", { payload, req }, { private: { res } })` — and merges only a
+  clone-safe request snapshot (`payload` + `req`) onto the record.
 - The private channel is off-the-wire and **package-scoped**, keyed by the
   `_msgid` nrg mints for that send. nrg carries `_msgid` forward across every
   node, so the entry stays reachable no matter how the flow is wired.
@@ -266,13 +269,12 @@ the response — green `<statusCode>` on success, red `"response failed"` on err
 
 Reply derivation:
 
-- **source** `src = msg.output ?? msg` — values are read from `msg.output` when
-  present (wired from another nrg node), otherwise from the top-level `msg` (a
-  raw/injected message).
-- **statusCode** `Number(src.statusCode ?? config.statusCode) || Number(config.statusCode) || 200`
+- **source** the reply fields are read straight off the record root (`msg`) —
+  whether an upstream nrg node merged them on or a raw/injected message set them.
+- **statusCode** `Number(msg.statusCode ?? config.statusCode) || Number(config.statusCode) || 200`
   — an invalid/blank status falls back to config, then to `200`.
-- **headers** resolved `config.headers` first, then `src.headers` overrides.
-- **body** `src.payload` → `undefined`/`null` becomes an empty body; a `Buffer`
+- **headers** resolved `config.headers` first, then `msg.headers` overrides.
+- **body** `msg.payload` → `undefined`/`null` becomes an empty body; a `Buffer`
   is sent as-is; any other object is `JSON.stringify`'d (and, if no `content-type`
   header is set case-insensitively, `Content-Type: application/json` is added);
   otherwise `String(body)`.
@@ -287,16 +289,14 @@ Reply derivation:
 
 ### Ports
 
-**Input** — `Input<Port<{ payload?; statusCode?; headers?; output?; [key]: unknown }>>`
-(label: _Response_). Reply-source precedence:
+**Input** — `Input<Port<{ payload?; statusCode?; headers?; [key]: unknown }>>`
+(label: _Response_). Reply fields are read off the record root:
 
-| Source           | Effect                                                                         |
-| ---------------- | ------------------------------------------------------------------------------ |
-| `msg.output`     | Preferred source when wired from another nrg node (`src = msg.output ?? msg`). |
-| top-level `msg`  | Fallback source for a raw/injected message.                                    |
-| `src.statusCode` | Overrides `config.statusCode` (may be number or string).                       |
-| `src.headers`    | Merged over (overrides) resolved `config.headers`.                             |
-| `src.payload`    | The response body.                                                             |
+| Field            | Effect                                                   |
+| ---------------- | -------------------------------------------------------- |
+| `msg.statusCode` | Overrides `config.statusCode` (may be number or string). |
+| `msg.headers`    | Merged over (overrides) resolved `config.headers`.       |
+| `msg.payload`    | The response body.                                       |
 
 **Output** — none (sink node; the output generic is `never`).
 

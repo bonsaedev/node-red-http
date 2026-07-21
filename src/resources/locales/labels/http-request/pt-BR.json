@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "Nome",
-    "method": "Método",
-    "url": "URL",
-    "paytoqs": "Payload",
-    "headers": "Cabeçalhos",
-    "ret": "Retorno",
-    "authType": "Autenticação",
-    "persist": "Manter a conexão ativa",
-    "senderr": "Enviar erros da requisição para a saída",
-    "insecureHTTPParser": "Ativar o analisador HTTP inseguro"
+    "name": {
+      "label": "Nome",
+      "description": "Um rótulo opcional exibido no nó no editor."
+    },
+    "method": {
+      "label": "Método",
+      "description": "O método HTTP a usar; `use` o lê de msg.method em tempo de execução."
+    },
+    "url": {
+      "label": "URL",
+      "description": "A URL da requisição; oferece suporte a tags {{mustache}} sobre a mensagem."
+    },
+    "paytoqs": {
+      "label": "Payload",
+      "description": "Como msg.payload é enviado: ignorado, anexado à query string ou como corpo da requisição."
+    },
+    "headers": {
+      "label": "Cabeçalhos",
+      "description": "Cabeçalhos estáticos da requisição, mesclados com msg.headers."
+    },
+    "ret": {
+      "label": "Retorno",
+      "description": "O formato do corpo da resposta: uma string UTF-8, um buffer binário ou JSON analisado."
+    },
+    "authType": {
+      "label": "Autenticação",
+      "description": "O esquema de autenticação usado para a requisição."
+    },
+    "persist": {
+      "label": "Manter a conexão ativa",
+      "description": "Mantém a conexão TCP ativa entre requisições."
+    },
+    "senderr": {
+      "label": "Enviar erros da requisição para a saída",
+      "description": "Envia erros da requisição para a saída em vez de fazer o nó falhar."
+    },
+    "insecureHTTPParser": {
+      "label": "Ativar o analisador HTTP inseguro",
+      "description": "Aceita respostas HTTP malformadas usando um analisador inseguro."
+    }
   },
   "credentials": {
-    "user": "Usuário",
-    "password": "Senha",
-    "bearerToken": "Token"
+    "user": {
+      "label": "Usuário",
+      "description": "O nome de usuário para a autenticação básica."
+    },
+    "password": {
+      "label": "Senha",
+      "description": "A senha para a autenticação básica."
+    },
+    "bearerToken": {
+      "label": "Token",
+      "description": "O token para a autenticação bearer."
+    }
   },
   "options": {
     "method": {

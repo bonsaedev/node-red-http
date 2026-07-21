@@ -33,7 +33,7 @@ afterEach(() => {
 describe("http-request", () => {
   it("performs a GET and returns the body as text", async () => {
     // A hand-built Response has an empty `url`; only fetch populates it, so stamp
-    // it to verify the node maps res.url → output.responseUrl.
+    // it to verify the node merges res.url onto the record as `responseUrl`.
     const res = new Response("hello world", {
       status: 200,
       headers: { "content-type": "text/plain" },
@@ -48,7 +48,7 @@ describe("http-request", () => {
     expect(url).toBe("https://example.com/api");
     expect(init.method).toBe("GET");
 
-    const out = node.sent()[0][0].output;
+    const out = node.sent()[0][0];
     expect(out.statusCode).toBe(200);
     expect(out.payload).toBe("hello world");
     expect(out.responseUrl).toBe("https://example.com/api");
@@ -64,7 +64,7 @@ describe("http-request", () => {
     });
     await node.receive({ payload: {} });
 
-    expect(node.sent()[0][0].output.payload).toEqual({ id: 7, ok: true });
+    expect(node.sent()[0][0].payload).toEqual({ id: 7, ok: true });
   });
 
   it("reads the method from msg when method is 'use'", async () => {
@@ -154,7 +154,7 @@ describe("http-request", () => {
     });
     await node.receive({ payload: {} });
 
-    const out = node.sent()[0][0].output;
+    const out = node.sent()[0][0];
     expect(out.statusCode).toBe(0);
     expect(out.payload).toBe("ECONNREFUSED");
   });

@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "Nom",
-    "statusCode": "Code de statut",
-    "headers": "En-têtes"
+    "name": {
+      "label": "Nom",
+      "description": "Une étiquette facultative affichée sur le nœud dans l'éditeur."
+    },
+    "statusCode": {
+      "label": "Code de statut",
+      "description": "Le code de statut de la réponse ; vide utilise msg.statusCode, sinon 200."
+    },
+    "headers": {
+      "label": "En-têtes",
+      "description": "En-têtes de réponse par défaut, fusionnés avec msg.headers."
+    }
   },
   "input": {
     "label": "Réponse",

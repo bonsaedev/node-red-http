@@ -2,10 +2,9 @@ import { defineSchema, SchemaType } from "@bonsae/nrg/schema";
 
 /**
  * http-out writes the reply for a request started by http-in. It is a SINK
- * node (no wire output). It reads the live socket off the off-the-wire PRIVATE
- * channel (`msg[Channels].private.res`, keyed by the message's `_msgid`) and sends
- * the response. `statusCode`/`headers` here are defaults; msg.statusCode/msg.headers
- * override.
+ * node (no wire output). It takes the live socket from the guarded store by the id
+ * http-in rode on `_httpIn.resId` and sends the response. `statusCode`/`headers`
+ * here are defaults; msg.statusCode/msg.headers override.
  */
 export const ConfigsSchema = defineSchema(
   {

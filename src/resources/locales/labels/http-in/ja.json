@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "名前",
-    "method": "メソッド",
-    "url": "URL"
+    "name": {
+      "label": "名前",
+      "description": "エディターでノードに表示される任意のラベル。"
+    },
+    "method": {
+      "label": "メソッド",
+      "description": "このノードがリッスンする HTTP メソッド。"
+    },
+    "url": {
+      "label": "URL",
+      "description": "リッスンするパス（例: /hello または /user/:id）。"
+    }
   },
   "outputs": {
     "out": {
       "label": "リクエスト",
-      "description": "受信した HTTP リクエストごとに 1 つのメッセージ — ペイロードとリクエストのスナップショット（method、url、headers、query、params、body）。ライブレスポンスはプライベートチャネルを通って http-out へ送られます。"
+      "description": "受信した HTTP リクエストごとに 1 つのメッセージ — ペイロードとリクエストのスナップショット（method、url、headers、query、params、body）。出力を http-out ノードに接続して返信を送信します。"
     }
   }
 }

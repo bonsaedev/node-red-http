@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "이름",
-    "statusCode": "상태 코드",
-    "headers": "헤더"
+    "name": {
+      "label": "이름",
+      "description": "에디터에서 노드에 표시되는 선택적 레이블."
+    },
+    "statusCode": {
+      "label": "상태 코드",
+      "description": "응답 상태 코드입니다. 비워두면 msg.statusCode를, 없으면 200을 사용합니다."
+    },
+    "headers": {
+      "label": "헤더",
+      "description": "기본 응답 헤더로, msg.headers와 병합됩니다."
+    }
   },
   "input": {
     "label": "응답",

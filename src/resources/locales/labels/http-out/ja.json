@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "名前",
-    "statusCode": "ステータスコード",
-    "headers": "ヘッダー"
+    "name": {
+      "label": "名前",
+      "description": "エディターでノードに表示される任意のラベル。"
+    },
+    "statusCode": {
+      "label": "ステータスコード",
+      "description": "レスポンスのステータスコード。空の場合は msg.statusCode を、なければ 200 を使用します。"
+    },
+    "headers": {
+      "label": "ヘッダー",
+      "description": "既定のレスポンスヘッダー。msg.headers とマージされます。"
+    }
   },
   "input": {
     "label": "レスポンス",

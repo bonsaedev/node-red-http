@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "이름",
-    "method": "메서드",
-    "url": "URL"
+    "name": {
+      "label": "이름",
+      "description": "에디터에서 노드에 표시되는 선택적 레이블."
+    },
+    "method": {
+      "label": "메서드",
+      "description": "이 노드가 수신 대기하는 HTTP 메서드."
+    },
+    "url": {
+      "label": "URL",
+      "description": "수신 대기할 경로입니다(예: /hello 또는 /user/:id)."
+    }
   },
   "outputs": {
     "out": {
       "label": "요청",
-      "description": "수신되는 HTTP 요청마다 하나의 메시지 — 페이로드와 요청 스냅샷(method, url, headers, query, params, body). 라이브 응답은 프라이빗 채널을 통해 http-out으로 전달됩니다."
+      "description": "수신되는 HTTP 요청마다 하나의 메시지 — 페이로드와 요청 스냅샷(method, url, headers, query, params, body). 출력을 http-out 노드에 연결하여 응답을 보냅니다."
     }
   }
 }

@@ -10,8 +10,8 @@ import {
   CredentialsSchema,
 } from "../../shared/schemas/http-request";
 
-type Config = Infer<typeof ConfigsSchema>;
-type Credentials = Infer<typeof CredentialsSchema>;
+type HttpRequestConfig = Infer<typeof ConfigsSchema>;
+type HttpRequestCredentials = Infer<typeof CredentialsSchema>;
 
 /**
  * Incoming message. Like the core node, a handful of msg properties override the
@@ -27,8 +27,8 @@ type HttpRequestInput = Input<
 >;
 
 /**
- * The response, delivered under `msg.output` (nrg's envelope convention). `payload`
- * is a string (ret=txt), a Buffer (ret=bin), or parsed JSON (ret=obj).
+ * The response fields, merged onto the message record (nrg's record model).
+ * `payload` is a string (ret=txt), a Buffer (ret=bin), or parsed JSON (ret=obj).
  */
 type HttpRequestOutputs = Outputs<{
   response: Port<{
@@ -43,8 +43,8 @@ type HttpRequestOutputs = Outputs<{
 const BODYLESS = new Set(["GET", "HEAD"]);
 
 export default class HttpRequest extends IONode<
-  Config,
-  Credentials,
+  HttpRequestConfig,
+  HttpRequestCredentials,
   HttpRequestInput,
   HttpRequestOutputs
 > {

@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "Имя",
-    "statusCode": "Код состояния",
-    "headers": "Заголовки"
+    "name": {
+      "label": "Имя",
+      "description": "Необязательная подпись, отображаемая на узле в редакторе."
+    },
+    "statusCode": {
+      "label": "Код состояния",
+      "description": "Код состояния ответа; пусто использует msg.statusCode, иначе 200."
+    },
+    "headers": {
+      "label": "Заголовки",
+      "description": "Заголовки ответа по умолчанию, объединяемые с msg.headers."
+    }
   },
   "input": {
     "label": "Ответ",

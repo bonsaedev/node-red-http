@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "Nombre",
-    "method": "Método",
-    "url": "URL",
-    "paytoqs": "Payload",
-    "headers": "Cabeceras",
-    "ret": "Devolver",
-    "authType": "Autenticación",
-    "persist": "Mantener la conexión activa",
-    "senderr": "Enviar errores de la petición a la salida",
-    "insecureHTTPParser": "Habilitar el analizador HTTP inseguro"
+    "name": {
+      "label": "Nombre",
+      "description": "Una etiqueta opcional que se muestra en el nodo en el editor."
+    },
+    "method": {
+      "label": "Método",
+      "description": "El método HTTP a usar; `use` lo lee de msg.method en tiempo de ejecución."
+    },
+    "url": {
+      "label": "URL",
+      "description": "La URL de la petición; admite etiquetas {{mustache}} contra el mensaje."
+    },
+    "paytoqs": {
+      "label": "Payload",
+      "description": "Cómo se envía msg.payload: ignorado, añadido a la cadena de consulta o como cuerpo de la petición."
+    },
+    "headers": {
+      "label": "Cabeceras",
+      "description": "Cabeceras estáticas de la petición, combinadas con msg.headers."
+    },
+    "ret": {
+      "label": "Devolver",
+      "description": "La forma del cuerpo de la respuesta: una cadena UTF-8, un búfer binario o JSON analizado."
+    },
+    "authType": {
+      "label": "Autenticación",
+      "description": "El esquema de autenticación usado para la petición."
+    },
+    "persist": {
+      "label": "Mantener la conexión activa",
+      "description": "Mantiene la conexión TCP activa entre peticiones."
+    },
+    "senderr": {
+      "label": "Enviar errores de la petición a la salida",
+      "description": "Envía los errores de la petición a la salida en lugar de hacer fallar el nodo."
+    },
+    "insecureHTTPParser": {
+      "label": "Habilitar el analizador HTTP inseguro",
+      "description": "Acepta respuestas HTTP mal formadas usando un analizador inseguro."
+    }
   },
   "credentials": {
-    "user": "Usuario",
-    "password": "Contraseña",
-    "bearerToken": "Token"
+    "user": {
+      "label": "Usuario",
+      "description": "El nombre de usuario para la autenticación básica."
+    },
+    "password": {
+      "label": "Contraseña",
+      "description": "La contraseña para la autenticación básica."
+    },
+    "bearerToken": {
+      "label": "Token",
+      "description": "El token para la autenticación bearer."
+    }
   },
   "options": {
     "method": {

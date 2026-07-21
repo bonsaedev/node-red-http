@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "Name",
-    "statusCode": "Status code",
-    "headers": "Headers"
+    "name": {
+      "label": "Name",
+      "description": "An optional label shown on the node in the editor."
+    },
+    "statusCode": {
+      "label": "Status code",
+      "description": "The response status code; blank uses msg.statusCode, otherwise 200."
+    },
+    "headers": {
+      "label": "Headers",
+      "description": "Default response headers, merged with msg.headers."
+    }
   },
   "input": {
     "label": "Response",

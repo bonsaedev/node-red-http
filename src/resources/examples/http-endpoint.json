@@ -4,7 +4,7 @@
     "type": "tab",
     "label": "HTTP endpoint example",
     "disabled": false,
-    "info": "A tiny web endpoint: http-in listens on GET /hello and http-out writes the reply back on the live socket. The response echoes the incoming request (http-out reads msg.output when none is set). Deploy, then run: curl http://localhost:1880/hello"
+    "info": "A tiny web endpoint: http-in listens on GET /hello and http-out writes the reply back on the live socket. The response echoes the incoming request (http-out reads the message record's fields). Deploy, then run: curl http://localhost:1880/hello"
   },
   {
     "id": "srv_in",

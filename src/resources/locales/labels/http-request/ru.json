@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "Имя",
-    "method": "Метод",
-    "url": "URL",
-    "paytoqs": "Полезная нагрузка",
-    "headers": "Заголовки",
-    "ret": "Возврат",
-    "authType": "Аутентификация",
-    "persist": "Поддерживать соединение",
-    "senderr": "Отправлять ошибки запроса на выход",
-    "insecureHTTPParser": "Включить небезопасный HTTP-парсер"
+    "name": {
+      "label": "Имя",
+      "description": "Необязательная подпись, отображаемая на узле в редакторе."
+    },
+    "method": {
+      "label": "Метод",
+      "description": "Используемый HTTP-метод; `use` считывает его из msg.method во время выполнения."
+    },
+    "url": {
+      "label": "URL",
+      "description": "URL запроса; поддерживает теги {{mustache}} по сообщению."
+    },
+    "paytoqs": {
+      "label": "Полезная нагрузка",
+      "description": "Как отправляется msg.payload: игнорируется, добавляется в строку запроса или как тело запроса."
+    },
+    "headers": {
+      "label": "Заголовки",
+      "description": "Статические заголовки запроса, объединяемые с msg.headers."
+    },
+    "ret": {
+      "label": "Возврат",
+      "description": "Форма тела ответа: строка UTF-8, двоичный буфер или разобранный JSON."
+    },
+    "authType": {
+      "label": "Аутентификация",
+      "description": "Схема аутентификации, используемая для запроса."
+    },
+    "persist": {
+      "label": "Поддерживать соединение",
+      "description": "Поддерживает TCP-соединение активным между запросами."
+    },
+    "senderr": {
+      "label": "Отправлять ошибки запроса на выход",
+      "description": "Отправляет ошибки запроса на выход вместо сбоя узла."
+    },
+    "insecureHTTPParser": {
+      "label": "Включить небезопасный HTTP-парсер",
+      "description": "Принимает некорректные HTTP-ответы с помощью небезопасного парсера."
+    }
   },
   "credentials": {
-    "user": "Имя пользователя",
-    "password": "Пароль",
-    "bearerToken": "Токен"
+    "user": {
+      "label": "Имя пользователя",
+      "description": "Имя пользователя для базовой аутентификации."
+    },
+    "password": {
+      "label": "Пароль",
+      "description": "Пароль для базовой аутентификации."
+    },
+    "bearerToken": {
+      "label": "Токен",
+      "description": "Токен для bearer-аутентификации."
+    }
   },
   "options": {
     "method": {

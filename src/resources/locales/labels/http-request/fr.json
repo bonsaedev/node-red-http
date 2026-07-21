@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "Nom",
-    "method": "Méthode",
-    "url": "URL",
-    "paytoqs": "Payload",
-    "headers": "En-têtes",
-    "ret": "Retour",
-    "authType": "Authentification",
-    "persist": "Garder la connexion active",
-    "senderr": "Envoyer les erreurs de requête à la sortie",
-    "insecureHTTPParser": "Activer l'analyseur HTTP non sécurisé"
+    "name": {
+      "label": "Nom",
+      "description": "Une étiquette facultative affichée sur le nœud dans l'éditeur."
+    },
+    "method": {
+      "label": "Méthode",
+      "description": "La méthode HTTP à utiliser ; `use` la lit depuis msg.method à l'exécution."
+    },
+    "url": {
+      "label": "URL",
+      "description": "L'URL de la requête ; prend en charge les balises {{mustache}} sur le message."
+    },
+    "paytoqs": {
+      "label": "Payload",
+      "description": "Comment msg.payload est envoyé : ignoré, ajouté à la chaîne de requête ou comme corps de requête."
+    },
+    "headers": {
+      "label": "En-têtes",
+      "description": "En-têtes de requête statiques, fusionnés avec msg.headers."
+    },
+    "ret": {
+      "label": "Retour",
+      "description": "La forme du corps de la réponse : une chaîne UTF-8, un tampon binaire ou du JSON analysé."
+    },
+    "authType": {
+      "label": "Authentification",
+      "description": "Le schéma d'authentification utilisé pour la requête."
+    },
+    "persist": {
+      "label": "Garder la connexion active",
+      "description": "Maintient la connexion TCP active entre les requêtes."
+    },
+    "senderr": {
+      "label": "Envoyer les erreurs de requête à la sortie",
+      "description": "Envoie les erreurs de requête à la sortie au lieu de faire échouer le nœud."
+    },
+    "insecureHTTPParser": {
+      "label": "Activer l'analyseur HTTP non sécurisé",
+      "description": "Accepte les réponses HTTP mal formées à l'aide d'un analyseur non sécurisé."
+    }
   },
   "credentials": {
-    "user": "Nom d'utilisateur",
-    "password": "Mot de passe",
-    "bearerToken": "Jeton"
+    "user": {
+      "label": "Nom d'utilisateur",
+      "description": "Le nom d'utilisateur pour l'authentification basique."
+    },
+    "password": {
+      "label": "Mot de passe",
+      "description": "Le mot de passe pour l'authentification basique."
+    },
+    "bearerToken": {
+      "label": "Jeton",
+      "description": "Le jeton pour l'authentification bearer."
+    }
   },
   "options": {
     "method": {

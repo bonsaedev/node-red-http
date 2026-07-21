@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "名稱",
-    "statusCode": "狀態碼",
-    "headers": "標頭"
+    "name": {
+      "label": "名稱",
+      "description": "在編輯器中顯示在節點上的選用標籤。"
+    },
+    "statusCode": {
+      "label": "狀態碼",
+      "description": "回應狀態碼；留空則使用 msg.statusCode，否則為 200。"
+    },
+    "headers": {
+      "label": "標頭",
+      "description": "預設回應標頭，與 msg.headers 合併。"
+    }
   },
   "input": {
     "label": "回應",

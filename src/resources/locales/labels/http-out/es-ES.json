@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "Nombre",
-    "statusCode": "Código de estado",
-    "headers": "Cabeceras"
+    "name": {
+      "label": "Nombre",
+      "description": "Una etiqueta opcional que se muestra en el nodo en el editor."
+    },
+    "statusCode": {
+      "label": "Código de estado",
+      "description": "El código de estado de la respuesta; en blanco usa msg.statusCode, si no 200."
+    },
+    "headers": {
+      "label": "Cabeceras",
+      "description": "Cabeceras de respuesta predeterminadas, combinadas con msg.headers."
+    }
   },
   "input": {
     "label": "Respuesta",

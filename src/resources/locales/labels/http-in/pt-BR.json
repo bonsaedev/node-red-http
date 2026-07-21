@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "Nome",
-    "method": "Método",
-    "url": "URL"
+    "name": {
+      "label": "Nome",
+      "description": "Um rótulo opcional exibido no nó no editor."
+    },
+    "method": {
+      "label": "Método",
+      "description": "O método HTTP que este nó escuta."
+    },
+    "url": {
+      "label": "URL",
+      "description": "O caminho a escutar, como /hello ou /user/:id."
+    }
   },
   "outputs": {
     "out": {
       "label": "Requisição",
-      "description": "Uma mensagem por requisição HTTP recebida — o payload e um instantâneo da requisição (method, url, headers, query, params, body). A resposta ao vivo trafega pelo canal privado até o http-out."
+      "description": "Uma mensagem por requisição HTTP recebida — o payload e um instantâneo da requisição (method, url, headers, query, params, body). Conecte a saída a um nó http-out para enviar a resposta."
     }
   }
 }

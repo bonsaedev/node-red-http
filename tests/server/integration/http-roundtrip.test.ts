@@ -14,13 +14,12 @@ import HttpIn from "../../../src/server/nodes/http-in";
 import HttpOut from "../../../src/server/nodes/http-out";
 
 /**
- * A minimal intermediate nrg node: reads the payload off the envelope and
- * re-emits it under the DEFAULT passthrough mode. Used to prove `_msgid`
- * correlation survives an nrg node between http-in and http-out — which only
- * works because nrg carries `_msgid` forward, so the PRIVATE channel holding
- * the live `res` is still recoverable downstream.
+ * A minimal intermediate nrg node: reads `payload` off the record root and
+ * merges it back onto the record. Proves `_httpIn.resId` survives an nrg node
+ * between http-in and http-out — the merge carries the id forward, so http-out
+ * can still take the live `res` from the guarded store downstream.
  */
-type PassthroughInput = Input<Port<{ output: { payload: unknown } }>>;
+type PassthroughInput = Input<Port<{ payload: unknown }>>;
 class Passthrough extends IONode<
   Record<string, never>,
   never,
@@ -31,19 +30,17 @@ class Passthrough extends IONode<
   static override readonly category = "test";
   static override readonly color = "#cccccc";
   override async input(msg: PassthroughInput) {
-    this.send(0, { payload: msg.output.payload });
+    this.send(0, { payload: msg.payload });
   }
 }
 
 /**
- * An nrg node that awaits `msg.output.payload.ms` before re-emitting. Used to
+ * An nrg node that awaits `msg.payload.ms` before re-emitting. Used to
  * deliberately SCRAMBLE completion order across concurrent requests — proving
- * responses are routed by each request's own `_msgid`, never by arrival/completion
- * order.
+ * responses are routed by each request's own `_httpIn.resId`, never by
+ * arrival/completion order.
  */
-type DelayInput = Input<
-  Port<{ output: { payload: { id?: string; ms?: string } } }>
->;
+type DelayInput = Input<Port<{ payload: { id?: string; ms?: string } }>>;
 class Delay extends IONode<
   Record<string, never>,
   never,
@@ -54,19 +51,19 @@ class Delay extends IONode<
   static override readonly category = "test";
   static override readonly color = "#cccccc";
   override async input(msg: DelayInput) {
-    const payload = msg.output.payload;
+    const payload = msg.payload;
     await new Promise((r) => setTimeout(r, Number(payload?.ms ?? 0)));
     this.send(0, { payload });
   }
 }
 
 /**
- * The real proof of the private-channel design: a live HTTP request flows through
- * Node-RED's actual server → http-in (which parks the live req/res on the
- * off-the-wire PRIVATE channel keyed by the message's `_msgid` and emits only a
- * clone-safe snapshot) → http-out (which reads the socket back off
- * `msg[Channels].private.res` and replies). If the reply reaches the client, the live
- * `res` survived the trip without ever riding a wire.
+ * The real proof of the guarded-store design: a live HTTP request flows through
+ * Node-RED's actual server → http-in (which stashes the live `res` in the guarded
+ * store under a minted id and emits only a clone-safe snapshot plus that id on
+ * `_httpIn.resId`) → http-out (which takes the socket back from the store by the
+ * id and replies). If the reply reaches the client, the live `res` survived the
+ * trip without ever riding a wire.
  */
 describe("http-in → http-out (real HTTP round-trip)", () => {
   let runtime: Runtime;
@@ -116,10 +113,10 @@ describe("http-in → http-out (real HTTP round-trip)", () => {
     expect(await res.json()).toEqual({ name: "world" });
   });
 
-  it("correlates through an intermediate nrg node (via _msgid)", async () => {
-    // http-in → passthrough (an nrg node, default passthrough mode) → http-out.
-    // This works ONLY because nrg preserves `_msgid` across the node — the whole
-    // point of the fix. The passthrough re-emits the query under the envelope.
+  it("correlates through an intermediate nrg node (via _httpIn.resId)", async () => {
+    // http-in → passthrough (an nrg node that merges the record) → http-out.
+    // This works because the merge carries `_httpIn.resId` across the node, so
+    // http-out can still take the live res. The passthrough re-merges the query.
     const flow = runtime.flow();
     const inNode = flow.addNode(HttpIn, { method: "get", url: "/via-nrg" });
     const mid = flow.addNode(Passthrough, {});
@@ -136,7 +133,7 @@ describe("http-in → http-out (real HTTP round-trip)", () => {
     expect(await res.json()).toEqual({ name: "world" });
   });
 
-  it("concurrent requests never cross responses (each keyed by its own _msgid)", async () => {
+  it("concurrent requests never cross responses (each keyed by its own _httpIn.resId)", async () => {
     const flow = runtime.flow();
     const inNode = flow.addNode(HttpIn, { method: "get", url: "/concurrent" });
     const delay = flow.addNode(Delay, {});
@@ -151,8 +148,8 @@ describe("http-in → http-out (real HTTP round-trip)", () => {
     const N = 8;
     // REVERSED delays: request 0 waits longest, request N-1 shortest — so the
     // completion order is the opposite of the arrival order. A FIFO/keyless
-    // registry would answer request 0 with request (N-1)'s body. `_msgid` keying
-    // must give each caller exactly its own `id` back.
+    // store would answer request 0 with request (N-1)'s body. `_httpIn.resId`
+    // keying must give each caller exactly its own `id` back.
     const bodies = await Promise.all(
       Array.from({ length: N }, (_, i) =>
         fetch(`${baseUrl}/concurrent?id=${i}&ms=${(N - i) * 20}`).then(

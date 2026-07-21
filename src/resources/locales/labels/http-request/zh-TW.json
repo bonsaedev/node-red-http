@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "名稱",
-    "method": "方法",
-    "url": "URL",
-    "paytoqs": "酬載",
-    "headers": "標頭",
-    "ret": "回傳",
-    "authType": "身份驗證",
-    "persist": "保持連線",
-    "senderr": "將請求錯誤傳送到輸出",
-    "insecureHTTPParser": "啟用不安全的 HTTP 解析器"
+    "name": {
+      "label": "名稱",
+      "description": "在編輯器中顯示在節點上的選用標籤。"
+    },
+    "method": {
+      "label": "方法",
+      "description": "要使用的 HTTP 方法；`use` 會在執行時從 msg.method 讀取。"
+    },
+    "url": {
+      "label": "URL",
+      "description": "請求 URL；支援針對訊息的 {{mustache}} 標籤。"
+    },
+    "paytoqs": {
+      "label": "酬載",
+      "description": "msg.payload 的傳送方式：忽略、附加到查詢字串或作為請求主體。"
+    },
+    "headers": {
+      "label": "標頭",
+      "description": "靜態請求標頭，與 msg.headers 合併。"
+    },
+    "ret": {
+      "label": "回傳",
+      "description": "回應主體的形式：UTF-8 字串、二進位緩衝區或解析後的 JSON。"
+    },
+    "authType": {
+      "label": "身份驗證",
+      "description": "用於請求的身份驗證方案。"
+    },
+    "persist": {
+      "label": "保持連線",
+      "description": "在多次請求之間保持 TCP 連線。"
+    },
+    "senderr": {
+      "label": "將請求錯誤傳送到輸出",
+      "description": "將請求錯誤傳送到輸出，而不是讓節點失敗。"
+    },
+    "insecureHTTPParser": {
+      "label": "啟用不安全的 HTTP 解析器",
+      "description": "使用不安全的解析器接受格式錯誤的 HTTP 回應。"
+    }
   },
   "credentials": {
-    "user": "使用者名稱",
-    "password": "密碼",
-    "bearerToken": "權杖"
+    "user": {
+      "label": "使用者名稱",
+      "description": "用於基本身份驗證的使用者名稱。"
+    },
+    "password": {
+      "label": "密碼",
+      "description": "用於基本身份驗證的密碼。"
+    },
+    "bearerToken": {
+      "label": "權杖",
+      "description": "用於 Bearer 身份驗證的權杖。"
+    }
   },
   "options": {
     "method": {

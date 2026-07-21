@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "名前",
-    "method": "メソッド",
-    "url": "URL",
-    "paytoqs": "ペイロード",
-    "headers": "ヘッダー",
-    "ret": "戻り値",
-    "authType": "認証",
-    "persist": "接続を維持する",
-    "senderr": "リクエストエラーを出力に送る",
-    "insecureHTTPParser": "安全でない HTTP パーサーを有効にする"
+    "name": {
+      "label": "名前",
+      "description": "エディターでノードに表示される任意のラベル。"
+    },
+    "method": {
+      "label": "メソッド",
+      "description": "使用する HTTP メソッド。`use` の場合は実行時に msg.method から読み取ります。"
+    },
+    "url": {
+      "label": "URL",
+      "description": "リクエスト URL。メッセージに対する {{mustache}} タグをサポートします。"
+    },
+    "paytoqs": {
+      "label": "ペイロード",
+      "description": "msg.payload の送り方: 無視、クエリ文字列に追加、またはリクエストボディとして送信。"
+    },
+    "headers": {
+      "label": "ヘッダー",
+      "description": "静的なリクエストヘッダー。msg.headers とマージされます。"
+    },
+    "ret": {
+      "label": "戻り値",
+      "description": "レスポンスボディの形式: UTF-8 文字列、バイナリバッファ、または解析済み JSON。"
+    },
+    "authType": {
+      "label": "認証",
+      "description": "リクエストに使用する認証方式。"
+    },
+    "persist": {
+      "label": "接続を維持する",
+      "description": "リクエスト間で TCP 接続を維持します。"
+    },
+    "senderr": {
+      "label": "リクエストエラーを出力に送る",
+      "description": "リクエストエラーでノードを失敗させる代わりに、出力に送ります。"
+    },
+    "insecureHTTPParser": {
+      "label": "安全でない HTTP パーサーを有効にする",
+      "description": "安全でないパーサーを使用して不正な形式の HTTP レスポンスを受け入れます。"
+    }
   },
   "credentials": {
-    "user": "ユーザー名",
-    "password": "パスワード",
-    "bearerToken": "トークン"
+    "user": {
+      "label": "ユーザー名",
+      "description": "Basic 認証のユーザー名。"
+    },
+    "password": {
+      "label": "パスワード",
+      "description": "Basic 認証のパスワード。"
+    },
+    "bearerToken": {
+      "label": "トークン",
+      "description": "ベアラー認証のトークン。"
+    }
   },
   "options": {
     "method": {

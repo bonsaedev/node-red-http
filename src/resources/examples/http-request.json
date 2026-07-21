@@ -4,7 +4,7 @@
     "type": "tab",
     "label": "HTTP request example",
     "disabled": false,
-    "info": "Fire an outbound GET with http-request and inspect the response in the debug sidebar. Point the URL at any JSON API. The response arrives on msg.output = { statusCode, headers, payload, responseUrl }."
+    "info": "Fire an outbound GET with http-request and inspect the response in the debug sidebar. Point the URL at any JSON API. The response fields arrive on the message record: statusCode, headers, payload, responseUrl."
   },
   {
     "id": "req_inject",
@@ -46,8 +46,7 @@
     "name": "response",
     "active": true,
     "tosidebar": true,
-    "complete": "output",
-    "targetType": "msg",
+    "complete": "true",
     "x": 520,
     "y": 100,
     "wires": []

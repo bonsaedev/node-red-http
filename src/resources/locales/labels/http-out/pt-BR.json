@@ -2,9 +2,18 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP out",
   "configs": {
-    "name": "Nome",
-    "statusCode": "Código de status",
-    "headers": "Cabeçalhos"
+    "name": {
+      "label": "Nome",
+      "description": "Um rótulo opcional exibido no nó no editor."
+    },
+    "statusCode": {
+      "label": "Código de status",
+      "description": "O código de status da resposta; em branco usa msg.statusCode, caso contrário 200."
+    },
+    "headers": {
+      "label": "Cabeçalhos",
+      "description": "Cabeçalhos de resposta padrão, mesclados com msg.headers."
+    }
   },
   "input": {
     "label": "Resposta",

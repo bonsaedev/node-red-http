@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "Name",
-    "method": "Methode",
-    "url": "URL",
-    "paytoqs": "Payload",
-    "headers": "Header",
-    "ret": "Rückgabe",
-    "authType": "Authentifizierung",
-    "persist": "Verbindung offen halten",
-    "senderr": "Anfragefehler an den Ausgang senden",
-    "insecureHTTPParser": "Unsicheren HTTP-Parser aktivieren"
+    "name": {
+      "label": "Name",
+      "description": "Eine optionale Beschriftung, die im Editor am Node angezeigt wird."
+    },
+    "method": {
+      "label": "Methode",
+      "description": "Die zu verwendende HTTP-Methode; `use` liest sie zur Laufzeit aus msg.method."
+    },
+    "url": {
+      "label": "URL",
+      "description": "Die Anfrage-URL; unterstützt {{mustache}}-Tags gegen die Nachricht."
+    },
+    "paytoqs": {
+      "label": "Payload",
+      "description": "Wie msg.payload gesendet wird: ignoriert, an den Query-String angehängt oder als Anfragekörper."
+    },
+    "headers": {
+      "label": "Header",
+      "description": "Statische Anfrage-Header, zusammengeführt mit msg.headers."
+    },
+    "ret": {
+      "label": "Rückgabe",
+      "description": "Die Form des Antwortkörpers: eine UTF-8-Zeichenkette, ein Binärpuffer oder geparstes JSON."
+    },
+    "authType": {
+      "label": "Authentifizierung",
+      "description": "Das für die Anfrage verwendete Authentifizierungsverfahren."
+    },
+    "persist": {
+      "label": "Verbindung offen halten",
+      "description": "Hält die TCP-Verbindung zwischen Anfragen offen."
+    },
+    "senderr": {
+      "label": "Anfragefehler an den Ausgang senden",
+      "description": "Sendet Anfragefehler an den Ausgang, statt den Node fehlschlagen zu lassen."
+    },
+    "insecureHTTPParser": {
+      "label": "Unsicheren HTTP-Parser aktivieren",
+      "description": "Akzeptiert fehlerhafte HTTP-Antworten mit einem unsicheren Parser."
+    }
   },
   "credentials": {
-    "user": "Benutzername",
-    "password": "Passwort",
-    "bearerToken": "Token"
+    "user": {
+      "label": "Benutzername",
+      "description": "Der Benutzername für die Basic-Authentifizierung."
+    },
+    "password": {
+      "label": "Passwort",
+      "description": "Das Passwort für die Basic-Authentifizierung."
+    },
+    "bearerToken": {
+      "label": "Token",
+      "description": "Das Token für die Bearer-Authentifizierung."
+    }
   },
   "options": {
     "method": {

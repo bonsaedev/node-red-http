@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "名稱",
-    "method": "方法",
-    "url": "URL"
+    "name": {
+      "label": "名稱",
+      "description": "在編輯器中顯示在節點上的選用標籤。"
+    },
+    "method": {
+      "label": "方法",
+      "description": "此節點監聽的 HTTP 方法。"
+    },
+    "url": {
+      "label": "URL",
+      "description": "要監聽的路徑，例如 /hello 或 /user/:id。"
+    }
   },
   "outputs": {
     "out": {
       "label": "請求",
-      "description": "每個傳入的 HTTP 請求對應一則訊息 — 酬載以及請求的快照（method、url、headers、query、params、body）。即時回應透過私有通道傳送到 http-out。"
+      "description": "每個傳入的 HTTP 請求對應一則訊息 — 酬載以及請求的快照（method、url、headers、query、params、body）。將輸出連接到 http-out 節點以傳送回應。"
     }
   }
 }

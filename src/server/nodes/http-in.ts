@@ -7,8 +7,9 @@ import {
 } from "@bonsae/nrg/server";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { ConfigsSchema } from "../../shared/schemas/http-in";
+import { resStore } from "../lib/res-store";
 
-type Config = Infer<typeof ConfigsSchema>;
+type HttpInConfig = Infer<typeof ConfigsSchema>;
 
 /** A plain, clone-safe snapshot of the request for downstream nodes to read. */
 type RequestSnapshot = {
@@ -21,21 +22,22 @@ type RequestSnapshot = {
 };
 
 /**
- * Emitted per request. The live `res` rides the off-the-wire PRIVATE channel
- * (package-scoped, keyed by the message's `_msgid`) — never on the serialized
- * message — so http-out reads it back with `msg[Channels].private.res`. The
- * public output is a clone-safe request snapshot for downstream nodes.
+ * Emitted per request. The live `res` can't ride a wire (it wouldn't survive a
+ * fan-out clone), so http-in stashes it in the module-local `resStore` under a
+ * freshly-minted id and rides ONLY that id on the wire — TYPED, inside
+ * `_httpIn`. http-out reads `_httpIn.resId` back and looks the socket up. The
+ * id is a declared wire field, so the wire-check reds http-out if a node between
+ * them drops it. The public output also carries a clone-safe request snapshot.
  */
 type HttpInOutputs = Outputs<{
   out: Port<{
     payload: unknown;
     req: RequestSnapshot;
+    _httpIn: { resId: string };
   }>;
 }>;
 
-/** 504 an unanswered request after this long so an abandoned socket never hangs.
- * The nrg channel store frees its own reference on a TTL, but the resource (the
- * socket) owns its release — so http-in ends it. */
+/** 504 an unanswered request after this long so an abandoned socket never hangs. */
 const RESPONSE_TIMEOUT_MS = 5 * 60_000;
 
 /** `RED.httpNode` is Node-RED's user-facing Express app (typed by nrg). Express
@@ -60,7 +62,7 @@ type ExpressRequest = IncomingMessage & {
 const BODY_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 export default class HttpIn extends IONode<
-  Config,
+  HttpInConfig,
   never,
   never,
   HttpInOutputs
@@ -145,28 +147,29 @@ export default class HttpIn extends IONode<
       );
     const body = BODY_METHODS.has(method) ? await readBody(req) : undefined;
 
-    // The live `res` rides the PRIVATE channel — off the wire, scoped to this
-    // package, keyed by the `_msgid` nrg mints for this source send and carries
-    // forward. http-out reads it back with `msg[Channels].private.res` from
-    // anywhere downstream; the public output carries only a clone-safe snapshot.
-    this.send(
-      "out",
-      {
-        payload: method === "GET" ? query : body,
-        req: {
-          method,
-          url: req.url ?? "",
-          headers: req.headers,
-          query,
-          params: req.params ?? {},
-          body,
-        },
+    // The live `res` can't ride the wire — stash it in `resStore` under a minted
+    // id and ride only that id, typed, inside `_httpIn`. http-out looks the socket
+    // back up by it; the public output carries only a clone-safe snapshot.
+    const resId = this.RED.util.generateId();
+    resStore.put(resId, res);
+    this.send("out", {
+      payload: method === "GET" ? query : body,
+      req: {
+        method,
+        url: req.url ?? "",
+        headers: req.headers,
+        query,
+        params: req.params ?? {},
+        body,
       },
-      { private: { res } },
-    );
+      _httpIn: { resId },
+    });
 
-    // The socket owns its own release: end an unanswered request with 504 so an
-    // abandoned request never hangs the client. Cleared once the reply is sent.
+    // An unanswered request would both hang the client and leak the `resStore`
+    // entry, so 504 the abandoned socket after a timeout; and on socket close
+    // (normal reply, 504, or client disconnect) clear the timer and drop the
+    // store entry — http-out also drops it when it takes the res, so this is the
+    // safety net for a request that never reaches an http-out.
     const timeout = setTimeout(() => {
       if (!res.writableEnded) {
         res.statusCode = 504;
@@ -174,7 +177,10 @@ export default class HttpIn extends IONode<
       }
     }, RESPONSE_TIMEOUT_MS);
     timeout.unref?.();
-    res.on("close", () => clearTimeout(timeout));
+    res.on("close", () => {
+      clearTimeout(timeout);
+      resStore.drop(resId);
+    });
   }
 }
 

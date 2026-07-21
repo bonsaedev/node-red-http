@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "Name",
-    "method": "Method",
-    "url": "URL",
-    "paytoqs": "Payload",
-    "headers": "Headers",
-    "ret": "Return",
-    "authType": "Authentication",
-    "persist": "Keep the connection alive",
-    "senderr": "Send request errors to the output",
-    "insecureHTTPParser": "Enable insecure HTTP parser"
+    "name": {
+      "label": "Name",
+      "description": "An optional label shown on the node in the editor."
+    },
+    "method": {
+      "label": "Method",
+      "description": "The HTTP method to use; `use` reads it from msg.method at runtime."
+    },
+    "url": {
+      "label": "URL",
+      "description": "The request URL; supports {{mustache}} tags against the message."
+    },
+    "paytoqs": {
+      "label": "Payload",
+      "description": "How msg.payload is sent: ignored, appended to the query string, or as the request body."
+    },
+    "headers": {
+      "label": "Headers",
+      "description": "Static request headers, merged with msg.headers."
+    },
+    "ret": {
+      "label": "Return",
+      "description": "The shape of the response body: a UTF-8 string, a binary buffer, or parsed JSON."
+    },
+    "authType": {
+      "label": "Authentication",
+      "description": "The authentication scheme used for the request."
+    },
+    "persist": {
+      "label": "Keep the connection alive",
+      "description": "Keeps the TCP connection alive between requests."
+    },
+    "senderr": {
+      "label": "Send request errors to the output",
+      "description": "Sends request errors to the output instead of failing the node."
+    },
+    "insecureHTTPParser": {
+      "label": "Enable insecure HTTP parser",
+      "description": "Accepts malformed HTTP responses using an insecure parser."
+    }
   },
   "credentials": {
-    "user": "Username",
-    "password": "Password",
-    "bearerToken": "Token"
+    "user": {
+      "label": "Username",
+      "description": "The username for basic authentication."
+    },
+    "password": {
+      "label": "Password",
+      "description": "The password for basic authentication."
+    },
+    "bearerToken": {
+      "label": "Token",
+      "description": "The token for bearer authentication."
+    }
   },
   "options": {
     "method": {

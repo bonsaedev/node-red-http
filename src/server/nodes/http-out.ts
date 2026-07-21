@@ -1,39 +1,29 @@
-import {
-  IONode,
-  type Infer,
-  type Input,
-  type Port,
-  Channels,
-} from "@bonsae/nrg/server";
+import { IONode, type Infer, type Input, type Port } from "@bonsae/nrg/server";
 import type { ServerResponse } from "node:http";
 import { ConfigsSchema } from "../../shared/schemas/http-out";
+import { resStore } from "../lib/res-store";
 
-type Config = Infer<typeof ConfigsSchema>;
+type HttpOutConfig = Infer<typeof ConfigsSchema>;
 
 /**
- * The incoming message. The live `res` to reply on rides the off-the-wire PRIVATE
- * channel (`msg[Channels].private.res`), which http-in stashed keyed by the
- * message's `_msgid` — nrg carries that id across every node, so the socket is
- * recoverable from anywhere downstream without a threaded-through correlation
- * field. The reply body/status/headers ride `output` (from an nrg node) or the
- * top level (from a core/injected message).
+ * The incoming message. The live `res` to reply on can't ride a wire, so http-in
+ * stashed it in the module-local `resStore` and rode only its id inside
+ * `_httpIn.resId` — REQUIRED here, so the wire-check reds if a node on the path
+ * drops it. The reply body/status/headers ride the accumulating record at the
+ * ROOT (`msg.payload` / `msg.statusCode` / `msg.headers`) — whether an upstream
+ * nrg node merged them on or a core/injected message set them.
  */
 type HttpOutInput = Input<
   Port<{
     payload?: unknown;
     statusCode?: number | string;
     headers?: Record<string, string>;
-    output?: {
-      payload?: unknown;
-      statusCode?: number | string;
-      headers?: Record<string, string>;
-    };
-    [key: string]: unknown;
+    _httpIn: { resId: string };
   }>
 >;
 
 export default class HttpOut extends IONode<
-  Config,
+  HttpOutConfig,
   never,
   HttpOutInput,
   never
@@ -44,22 +34,23 @@ export default class HttpOut extends IONode<
   static override readonly configSchema = ConfigsSchema;
 
   override async input(msg: HttpOutInput) {
-    const res = msg[Channels].private.res as ServerResponse | undefined;
+    // Take the live res from the guarded store by the id http-in rode on the wire —
+    // take-once, so a request is answered exactly once (a second http-out for the
+    // same id finds nothing). A raw/injected message may lack `_httpIn`, so guard.
+    const resId = msg._httpIn?.resId;
+    const res = resId ? resStore.take(resId) : undefined;
     if (!res) {
       this.status({ fill: "yellow", shape: "dot", text: "no request" });
       this.warn(
-        "http-out: no live response on the private channel — already " +
-          "answered, expired, or not wired from an http-in in this package.",
+        "http-out: no live response for this id — already answered, " +
+          "expired, or not wired from an http-in.",
       );
       return;
     }
-    // Claim it up front — a request is answered exactly once, so a second
-    // http-out for the same signal finds nothing (like the old registry take).
-    delete msg[Channels].private.res;
 
-    // Values ride under `output` when wired from another nrg node; fall back to
-    // the top level for a raw/injected message.
-    const src = msg.output ?? msg;
+    // The record model: fields ride at the ROOT — whether they came from an
+    // upstream nrg node's merge or a raw/injected message.
+    const src = msg;
     const statusCode =
       Number(src.statusCode ?? this.config.statusCode) ||
       Number(this.config.statusCode) ||

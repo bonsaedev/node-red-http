@@ -2,21 +2,60 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP request",
   "configs": {
-    "name": "名称",
-    "method": "方法",
-    "url": "URL",
-    "paytoqs": "载荷",
-    "headers": "标头",
-    "ret": "返回",
-    "authType": "身份验证",
-    "persist": "保持连接",
-    "senderr": "将请求错误发送到输出",
-    "insecureHTTPParser": "启用不安全的 HTTP 解析器"
+    "name": {
+      "label": "名称",
+      "description": "在编辑器中显示在节点上的可选标签。"
+    },
+    "method": {
+      "label": "方法",
+      "description": "要使用的 HTTP 方法；`use` 会在运行时从 msg.method 读取。"
+    },
+    "url": {
+      "label": "URL",
+      "description": "请求 URL；支持针对消息的 {{mustache}} 标签。"
+    },
+    "paytoqs": {
+      "label": "载荷",
+      "description": "msg.payload 的发送方式：忽略、追加到查询字符串或作为请求体。"
+    },
+    "headers": {
+      "label": "标头",
+      "description": "静态请求标头，与 msg.headers 合并。"
+    },
+    "ret": {
+      "label": "返回",
+      "description": "响应正文的形式：UTF-8 字符串、二进制缓冲区或解析后的 JSON。"
+    },
+    "authType": {
+      "label": "身份验证",
+      "description": "用于请求的身份验证方案。"
+    },
+    "persist": {
+      "label": "保持连接",
+      "description": "在多次请求之间保持 TCP 连接。"
+    },
+    "senderr": {
+      "label": "将请求错误发送到输出",
+      "description": "将请求错误发送到输出，而不是让节点失败。"
+    },
+    "insecureHTTPParser": {
+      "label": "启用不安全的 HTTP 解析器",
+      "description": "使用不安全的解析器接受格式错误的 HTTP 响应。"
+    }
   },
   "credentials": {
-    "user": "用户名",
-    "password": "密码",
-    "bearerToken": "令牌"
+    "user": {
+      "label": "用户名",
+      "description": "用于基本身份验证的用户名。"
+    },
+    "password": {
+      "label": "密码",
+      "description": "用于基本身份验证的密码。"
+    },
+    "bearerToken": {
+      "label": "令牌",
+      "description": "用于 Bearer 身份验证的令牌。"
+    }
   },
   "options": {
     "method": {

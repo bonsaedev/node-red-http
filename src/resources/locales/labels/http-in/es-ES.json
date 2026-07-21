@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "Nombre",
-    "method": "Método",
-    "url": "URL"
+    "name": {
+      "label": "Nombre",
+      "description": "Una etiqueta opcional que se muestra en el nodo en el editor."
+    },
+    "method": {
+      "label": "Método",
+      "description": "El método HTTP en el que escucha este nodo."
+    },
+    "url": {
+      "label": "URL",
+      "description": "La ruta en la que escuchar, como /hello o /user/:id."
+    }
   },
   "outputs": {
     "out": {
       "label": "Petición",
-      "description": "Un mensaje por cada petición HTTP entrante — el payload y una instantánea de la petición (method, url, headers, query, params, body). La respuesta en vivo viaja por el canal privado hasta http-out."
+      "description": "Un mensaje por cada petición HTTP entrante — el payload y una instantánea de la petición (method, url, headers, query, params, body). Conecta la salida a un nodo http-out para enviar la respuesta."
     }
   }
 }

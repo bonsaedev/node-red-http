@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createNode } from "@bonsae/nrg/test/server/unit";
-import { Channels } from "@bonsae/nrg/server";
 import type { MockRED } from "@bonsae/nrg/test/server/unit";
 import HttpIn from "../../../../src/server/nodes/http-in";
+import { resStore } from "../../../../src/server/lib/res-store";
 
 function config(overrides: Record<string, unknown> = {}) {
   return { name: "", method: "get", url: "/hello", ...overrides };
@@ -132,10 +132,14 @@ describe("http-in", () => {
       const { node, error } = await deploy(config({ url: "   " }));
 
       expect((error as Error)?.message).toMatch(/no url path configured/);
-      expect(node.statuses().at(-1)).toMatchObject({
-        fill: "red",
-        text: "missing path",
-      });
+      // The node sets its specific "missing path" status before throwing; the base
+      // class then stamps a generic "created() failed" status on the rejection, so
+      // assert "missing path" was set (its contract), not that it is the last one.
+      expect(
+        node
+          .statuses()
+          .some((s) => s.fill === "red" && s.text === "missing path"),
+      ).toBe(true);
       // No route was registered.
       const { RED } = await deploy(config({ url: "" }));
       expect(vi.mocked(RED.httpNode.get)).not.toHaveBeenCalled();
@@ -143,7 +147,7 @@ describe("http-in", () => {
   });
 
   describe("request handling", () => {
-    it("GET: emits the query as payload + a request snapshot, res on the private channel", async () => {
+    it("GET: emits the query as payload + a request snapshot, res stashed in the guarded store", async () => {
       const { node, handler } = await deploy(
         config({ method: "get", url: "/hello" }),
       );
@@ -160,16 +164,18 @@ describe("http-in", () => {
       );
 
       const frame = node.sent()[0][0];
-      expect(frame.output.payload).toEqual({ name: "world" });
-      expect(frame.output.req).toMatchObject({
+      expect(frame.payload).toEqual({ name: "world" });
+      expect(frame.req).toMatchObject({
         method: "GET",
         url: "/hello?name=world",
         query: { name: "world" },
         headers: { "x-test": "1" },
         body: undefined,
       });
-      // The live socket rides the private channel, never the public wire.
-      expect(frame[Channels].private.res).toBe(res);
+      // The live socket is stashed in the guarded store under the emitted id,
+      // never on the public wire; the id rides on `_httpIn.resId` for inspection.
+      expect(frame._httpIn.resId).toBeTypeOf("string");
+      expect(resStore.take(frame._httpIn.resId)).toBe(res);
     });
 
     it("POST: reads the parsed JSON body as payload", async () => {
@@ -189,8 +195,8 @@ describe("http-in", () => {
       );
 
       const frame = node.sent()[0][0];
-      expect(frame.output.payload).toEqual({ hi: "there" });
-      expect(frame.output.req.body).toEqual({ hi: "there" });
+      expect(frame.payload).toEqual({ hi: "there" });
+      expect(frame.req.body).toEqual({ hi: "there" });
     });
 
     it("uses req.query when Express already populated it (no re-parse)", async () => {
@@ -205,7 +211,7 @@ describe("http-in", () => {
       );
 
       // req.query wins over the URL search params.
-      expect(node.sent()[0][0].output.payload).toEqual({ a: "b" });
+      expect(node.sent()[0][0].payload).toEqual({ a: "b" });
     });
   });
 
@@ -219,7 +225,7 @@ describe("http-in", () => {
         fakeReq({ method: "POST", url: "/b", headers, raw }),
         fakeRes(),
       );
-      return node.sent()[0][0].output.payload;
+      return node.sent()[0][0].payload;
     }
 
     it("parses application/json", async () => {

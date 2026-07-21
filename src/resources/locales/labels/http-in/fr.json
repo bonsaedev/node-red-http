@@ -2,14 +2,23 @@
   "$schema": "https://unpkg.com/@bonsae/nrg/json-schemas/labels.schema.json",
   "label": "HTTP in",
   "configs": {
-    "name": "Nom",
-    "method": "Méthode",
-    "url": "URL"
+    "name": {
+      "label": "Nom",
+      "description": "Une étiquette facultative affichée sur le nœud dans l'éditeur."
+    },
+    "method": {
+      "label": "Méthode",
+      "description": "La méthode HTTP que ce nœud écoute."
+    },
+    "url": {
+      "label": "URL",
+      "description": "Le chemin à écouter, par exemple /hello ou /user/:id."
+    }
   },
   "outputs": {
     "out": {
       "label": "Requête",
-      "description": "Un message par requête HTTP entrante — le payload et un instantané de la requête (method, url, headers, query, params, body). La réponse en direct emprunte le canal privé vers http-out."
+      "description": "Un message par requête HTTP entrante — le payload et un instantané de la requête (method, url, headers, query, params, body). Reliez la sortie à un nœud http-out pour envoyer la réponse."
     }
   }
 }
