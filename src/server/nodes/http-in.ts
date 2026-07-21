@@ -11,6 +11,22 @@ import { resStore } from "../lib/res-store";
 
 type HttpInConfig = Infer<typeof ConfigsSchema>;
 
+/**
+ * A parsed `multipart/form-data` file part, lowered to clone-safe plain data: the
+ * bytes live in a Node `Buffer`, never a `File`/`Blob`. This rides under
+ * `httpIn.request` (a normal field, so Node-RED deep-clones it with
+ * `lodash.clonedeep` on every fan-out) — where a `Buffer` is copied faithfully but
+ * a `Blob` would collapse to an empty `{}`. Buffer is also what the rest of
+ * Node-RED speaks (debug sidebar, context storage), so it stays inspectable.
+ */
+type UploadedFile = {
+  field: string;
+  filename: string;
+  type: string;
+  size: number;
+  data: Buffer;
+};
+
 /** A plain, clone-safe snapshot of the request for downstream nodes to read. */
 type RequestSnapshot = {
   method: string;
@@ -19,20 +35,26 @@ type RequestSnapshot = {
   query: Record<string, unknown>;
   params: Record<string, string>;
   body: unknown;
+  /** Uploaded files — present only on a `multipart/form-data` request. */
+  files?: UploadedFile[];
 };
 
 /**
- * Emitted per request. The live `res` can't ride a wire (it wouldn't survive a
- * fan-out clone), so http-in stashes it in the module-local `resStore` under a
- * freshly-minted id and rides ONLY that id on the wire — TYPED, inside
- * `_httpIn`. http-out reads `_httpIn.resId` back and looks the socket up. The
- * id is a declared wire field, so the wire-check reds http-out if a node between
- * them drops it. The public output also carries a clone-safe request snapshot.
+ * Emitted per request. The output is split by a leading-underscore convention:
+ * `httpIn` (public) holds the `request` snapshot — flow authors read and reshape
+ * it freely; `_httpIn` (private) holds the internal `resId` — the correlation
+ * handle a flow author must NOT touch, or response routing breaks. We deliberately
+ * do NOT use Node-RED's `msg.req`/`msg.res` (those are the live Express objects,
+ * clone-exempt special cases in Node-RED's message clone). The live `res` can't
+ * ride a wire (it wouldn't survive a fan-out clone), so http-in stashes it in the
+ * module-local `resStore` under `resId` and rides only the id; http-out reads
+ * `_httpIn.resId` back and looks the socket up. `_httpIn.resId` is a declared,
+ * required field, so the wire-check reds http-out if a node on the path drops it.
  */
 type HttpInOutputs = Outputs<{
   out: Port<{
     payload: unknown;
-    req: RequestSnapshot;
+    httpIn: { request: RequestSnapshot };
     _httpIn: { resId: string };
   }>;
 }>;
@@ -145,22 +167,29 @@ export default class HttpIn extends IONode<
       Object.fromEntries(
         new URL(req.url ?? "/", "http://localhost").searchParams.entries(),
       );
-    const body = BODY_METHODS.has(method) ? await readBody(req) : undefined;
+    const { body, files } = BODY_METHODS.has(method)
+      ? await parseBody(req)
+      : { body: undefined, files: undefined };
 
     // The live `res` can't ride the wire — stash it in `resStore` under a minted
-    // id and ride only that id, typed, inside `_httpIn`. http-out looks the socket
-    // back up by it; the public output carries only a clone-safe snapshot.
+    // id and ride only that id inside private `_httpIn`. http-out looks the socket
+    // back up by it. Public `httpIn.request` carries the clone-safe snapshot for
+    // flow authors. Nothing lands on `msg.req`/`msg.res` — we don't touch
+    // Node-RED's live-object convention.
     const resId = this.RED.util.generateId();
     resStore.put(resId, res);
     this.send("out", {
       payload: method === "GET" ? query : body,
-      req: {
-        method,
-        url: req.url ?? "",
-        headers: req.headers,
-        query,
-        params: req.params ?? {},
-        body,
+      httpIn: {
+        request: {
+          method,
+          url: req.url ?? "",
+          headers: req.headers,
+          query,
+          params: req.params ?? {},
+          body,
+          ...(files ? { files } : {}),
+        },
       },
       _httpIn: { resId },
     });
@@ -191,24 +220,55 @@ function normalizePath(url: string | undefined): string {
   return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
 }
 
-/** Read + parse the request body by content-type (no body-parser dependency). */
-async function readBody(req: ExpressRequest): Promise<unknown> {
-  if (req.body !== undefined) return req.body; // already parsed upstream
+/**
+ * Read + parse the request body, no `body-parser`/`multer` dependency. We wrap
+ * the raw bytes in a WHATWG `Response` — the same web primitive the http-request
+ * node reads its fetch reply from — and let the platform parse them. That gives
+ * us `multipart/form-data` (file uploads) and `application/x-www-form-urlencoded`
+ * for free via `Response.formData()`; JSON, text, and unknown binary fall out of
+ * the same object. Files are lowered to clone-safe `{ ...Buffer }` descriptors so
+ * they survive Node-RED's message clone on a fan-out.
+ */
+async function parseBody(
+  req: ExpressRequest,
+): Promise<{ body: unknown; files?: UploadedFile[] }> {
+  if (req.body !== undefined) return { body: req.body }; // parsed upstream
   const chunks: Buffer[] = [];
   for await (const chunk of req) chunks.push(chunk as Buffer);
-  if (!chunks.length) return undefined;
+  if (!chunks.length) return { body: undefined };
   const raw = Buffer.concat(chunks);
   const contentType = String(req.headers["content-type"] ?? "");
+  const res = new Response(raw, { headers: { "content-type": contentType } });
+
   if (contentType.includes("application/json")) {
     try {
-      return JSON.parse(raw.toString("utf8"));
+      return { body: await res.json() };
     } catch {
-      return raw.toString("utf8");
+      return { body: raw.toString("utf8") }; // not JSON — hand back raw text
     }
   }
-  if (contentType.includes("application/x-www-form-urlencoded")) {
-    return Object.fromEntries(new URLSearchParams(raw.toString("utf8")));
+  if (
+    contentType.includes("multipart/form-data") ||
+    contentType.includes("application/x-www-form-urlencoded")
+  ) {
+    const form = await res.formData();
+    const fields: Record<string, unknown> = {};
+    const files: UploadedFile[] = [];
+    for (const [name, value] of form) {
+      if (typeof value === "string") {
+        fields[name] = value;
+      } else {
+        files.push({
+          field: name,
+          filename: value.name,
+          type: value.type,
+          size: value.size,
+          data: Buffer.from(await value.arrayBuffer()),
+        });
+      }
+    }
+    return files.length ? { body: fields, files } : { body: fields };
   }
-  if (contentType.startsWith("text/")) return raw.toString("utf8");
-  return raw;
+  if (contentType.startsWith("text/")) return { body: await res.text() };
+  return { body: raw }; // unknown content-type → raw Buffer
 }

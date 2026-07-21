@@ -202,6 +202,29 @@ describe("http-in → http-out (real HTTP round-trip)", () => {
     expect(await res.json()).toEqual({ patched: true });
   });
 
+  it("POST multipart/form-data: parses the text fields as payload", async () => {
+    const flow = runtime.flow();
+    flow.addNode(HttpIn, { method: "post", url: "/multipart" }).wire(
+      flow.addNode(HttpOut, {
+        statusCode: "",
+        headers: { type: "json", value: "{}" },
+      }),
+    );
+    await flow.deploy();
+
+    // A real multipart request over the socket (fetch sets the boundary itself);
+    // Response.formData() in the node parses the boundary bytes back into fields.
+    const form = new FormData();
+    form.set("name", "world");
+    form.set("greeting", "hi");
+    const res = await fetch(`${baseUrl}/multipart`, {
+      method: "POST",
+      body: form,
+    });
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ name: "world", greeting: "hi" });
+  });
+
   it("serves the registered route and 404s everything else", async () => {
     const flow = runtime.flow();
     flow.addNode(HttpIn, { method: "get", url: "/present" }).wire(

@@ -11,7 +11,7 @@ function config(overrides: Record<string, unknown> = {}) {
 
 /**
  * A fake Express request: an async-iterable of body chunks plus the fields
- * `#onRequest` reads. No `body` property is set, so `readBody` parses the raw
+ * `#onRequest` reads. No `body` property is set, so `parseBody` parses the raw
  * chunks itself (as it does when no upstream middleware pre-parsed the body).
  */
 function fakeReq(
@@ -165,7 +165,8 @@ describe("http-in", () => {
 
       const frame = node.sent()[0][0];
       expect(frame.payload).toEqual({ name: "world" });
-      expect(frame.req).toMatchObject({
+      // The public request snapshot rides under `httpIn.request` (never msg.req).
+      expect(frame.httpIn.request).toMatchObject({
         method: "GET",
         url: "/hello?name=world",
         query: { name: "world" },
@@ -173,9 +174,35 @@ describe("http-in", () => {
         body: undefined,
       });
       // The live socket is stashed in the guarded store under the emitted id,
-      // never on the public wire; the id rides on `_httpIn.resId` for inspection.
+      // never on the public wire; the id rides on private `_httpIn.resId`.
       expect(frame._httpIn.resId).toBeTypeOf("string");
       expect(resStore.take(frame._httpIn.resId)).toBe(res);
+    });
+
+    it("namespaces output as public `httpIn` + private `_httpIn`, with nothing on msg.req/res", async () => {
+      const { node, handler } = await deploy(
+        config({ method: "post", url: "/shape" }),
+      );
+
+      await driveRequest(
+        handler,
+        fakeReq({
+          method: "POST",
+          url: "/shape",
+          headers: { "content-type": "application/json" },
+          raw: JSON.stringify({ a: 1 }),
+        }),
+        fakeRes(),
+      );
+
+      const frame = node.sent()[0][0];
+      // Public: the request snapshot a flow author reads/reshapes freely.
+      expect(frame.httpIn.request.body).toEqual({ a: 1 });
+      // Private (leading `_`): the internal socket-correlation id, hands off.
+      expect(frame._httpIn.resId).toBeTypeOf("string");
+      // We deliberately do NOT ride Node-RED's live-object convention.
+      expect("req" in frame).toBe(false);
+      expect("res" in frame).toBe(false);
     });
 
     it("POST: reads the parsed JSON body as payload", async () => {
@@ -196,7 +223,7 @@ describe("http-in", () => {
 
       const frame = node.sent()[0][0];
       expect(frame.payload).toEqual({ hi: "there" });
-      expect(frame.req.body).toEqual({ hi: "there" });
+      expect(frame.httpIn.request.body).toEqual({ hi: "there" });
     });
 
     it("uses req.query when Express already populated it (no re-parse)", async () => {
@@ -270,6 +297,67 @@ describe("http-in", () => {
       expect(
         await bodyOf({ "content-type": "application/json" }),
       ).toBeUndefined();
+    });
+  });
+
+  describe("multipart/form-data", () => {
+    /** Serialize fields + files into real multipart bytes with the web
+     *  FormData/Request the platform ships — the exact wire format a browser
+     *  sends — then drive them through the node. */
+    async function multipart(build: (fd: FormData) => void) {
+      const fd = new FormData();
+      build(fd);
+      const encoded = new Request("http://x", { method: "POST", body: fd });
+      const raw = Buffer.from(await encoded.arrayBuffer());
+      const contentType = encoded.headers.get("content-type") ?? "";
+      const { node, handler } = await deploy(
+        config({ method: "post", url: "/upload" }),
+      );
+      await driveRequest(
+        handler,
+        fakeReq({
+          method: "POST",
+          url: "/upload",
+          headers: { "content-type": contentType },
+          raw,
+        }),
+        fakeRes(),
+      );
+      return node.sent()[0][0];
+    }
+
+    it("parses text fields into payload (no files)", async () => {
+      const frame = await multipart((fd) => {
+        fd.set("name", "world");
+        fd.set("count", "2");
+      });
+      expect(frame.payload).toEqual({ name: "world", count: "2" });
+      expect(frame.httpIn.request.files).toBeUndefined();
+    });
+
+    it("lowers uploaded files to clone-safe Buffer descriptors under req.files", async () => {
+      const frame = await multipart((fd) => {
+        fd.set("note", "hi");
+        fd.set(
+          "doc",
+          new File([Buffer.from("file-bytes")], "a.txt", {
+            type: "text/plain",
+          }),
+        );
+      });
+      // Non-file fields still land in payload...
+      expect(frame.payload).toEqual({ note: "hi" });
+      // ...and files ride on httpIn.request.files as { ...Buffer } — never a File/Blob.
+      expect(frame.httpIn.request.files).toHaveLength(1);
+      const file = frame.httpIn.request.files![0];
+      expect(file).toMatchObject({
+        field: "doc",
+        filename: "a.txt",
+        type: "text/plain",
+        size: 10,
+      });
+      expect(Buffer.isBuffer(file.data)).toBe(true);
+      expect(file.data.toString()).toBe("file-bytes");
     });
   });
 
